@@ -1,0 +1,11 @@
+# Generated visual assets
+
+Generated with the built-in image-generation tool. The original desktop mockup was a style reference for the mascot. The artwork is decorative and does not illustrate any actual report.
+
+## dist/assets/mascot.png
+
+Use case: ui-mockup supporting illustration. The attached image is a visual style reference only. Create one standalone reusable mascot asset for this exact UFO Observatory app: the same friendly glossy lime-green alien with an oversized oval head, enormous glossy black almond-shaped eyes, tiny cheerful smile, visible head and shoulders under a crystal-clear bubble dome, piloting a silver classic flying disk with lime rim lights. Premium 3D soft vinyl/clay illustration with physically believable metallic silver saucer and clear glass dome. Three-quarter view facing slightly toward the viewer's left, full saucer and dome entirely visible with generous transparent padding, clean isolated cutout, all edges sharp, no cropping. Match the mascot's friendly proportions and navy/lime color palette from the reference. This is an illustration asset, not an interface screenshot. No text, no logo lettering, no landscape, no stars or sparkles outside the mascot, no UI, no background plane, no black rectangle, no watermark. The background must be genuinely transparent.
+
+## dist/assets/landscape.png
+
+Use case: stylized-concept. Create a premium digital illustrated night landscape background for the UFO Observatory web app, matching a polished space-themed dark analytics dashboard. Wide panoramic composition, approximately 3:1. Near-black midnight navy sky with a subtle milky way, a scattering of tiny stars, layered blue distant mountain silhouettes, pine forests framing a still lake along the bottom. A small pale moon near the upper right. The left half should remain especially dark and quiet for white heading text to be overlaid later; leave the upper two thirds mostly open sky. Restrained teal blue and muted lavender atmospheric glow, refined cinematic depth, crisp detailed illustration that stays subtle behind an app header. No text, no letters, no interface, no logos, no alien, no flying saucer, no people, no watermark. This is solely a reusable wide background asset.

@@ -1,0 +1,10 @@
+node_modules/
+output/
+.DS_Store
+.openai/*.tar.gz
+.openai/
+.vercel/
+__pycache__/
+Final_Dataset.json
+*.env
+.env*

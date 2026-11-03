@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#08131e">
+  <meta name="description" content="A little curiosity. A lot of data. Explore a cleaned sample of UFO sighting reports with interactive maps, patterns and source stories.">
+  <title>UFO Observatory — Look up. Explore.</title>
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="preload" as="image" href="./assets/landscape.png">
+  <script defer src="./vendor/d3.min.js"></script>
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to the observatory</a>
+  <header class="site-header" id="site-header">
+    <div class="header-inner">
+      <a class="brand" href="?view=explore" data-view="explore" aria-label="UFO Observatory home"><img src="./assets/mascot.png" width="65" height="49" alt=""><span><strong>UFO</strong><span>OBSERVATORY</span></span></a>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="?view=explore" data-view="explore">Explore</a><a href="?view=patterns" data-view="patterns">Patterns</a><a href="?view=reports" data-view="reports">Reports</a><a href="?view=about" data-view="about">About the data</a>
+      </nav>
+      <button class="snapshot-badge" data-view="about"><span class="status-dot"></span>Fabric snapshot<span class="badge-arrow" aria-hidden="true">↗</span></button>
+    </div>
+  </header>
+
+  <section class="hero" id="hero" aria-labelledby="hero-title">
+    <div class="hero-scenery" aria-hidden="true"></div>
+    <div class="hero-inner"><div class="hero-copy"><div class="eyebrow"><span class="tiny-spark" aria-hidden="true">✦</span> A LITTLE CURIOSITY. A LOT OF DATA.</div><h1 id="hero-title">What’s <span>out there?</span></h1><p id="hero-subtitle">Explore the stories people report in our skies.</p><div class="hero-chips"><span><span class="status-dot"></span><strong id="sample-count">—</strong> reports in the sample</span><span id="sample-period">Fabric export</span></div></div><img class="hero-mascot" src="./assets/mascot.png" width="450" height="320" alt="A friendly green alien piloting a silver flying saucer"></div>
+  </section>
+
+  <div class="shell">
+    <section class="fact-banner" id="fact-banner" aria-label="UFO fun facts"><img src="./assets/mascot.png" width="110" height="80" alt=""><div class="fact-copy"><div class="eyebrow">COSMIC COFFEE BREAK</div><p id="fact-text">The National UFO Reporting Center was founded in 1974.</p><a id="fact-source" href="https://nuforc.org/about-us/" target="_blank" rel="noopener noreferrer">A little UFO history <span aria-hidden="true">↗</span></a></div><div class="fact-controls"><button id="fact-prev" class="icon-button" aria-label="Previous fun fact">‹</button><span id="fact-position">1 / 2</span><button id="fact-next" class="icon-button" aria-label="Next fun fact">›</button></div></section>
+
+    <div id="loading" class="loading-panel" role="status"><div class="orbit-loader" aria-hidden="true"></div><h2>Opening the observatory…</h2><p>Bringing your Fabric data into view.</p></div>
+    <div id="load-error" class="empty-state" hidden><h2>The data couldn’t be loaded.</h2><p id="error-message">Check your connection and try again.</p><button class="primary-button" onclick="location.reload()">Try again</button></div>
+
+    <div id="workspace" hidden>
+      <div class="page-toolbar" id="page-toolbar"><div><div class="eyebrow" id="section-eyebrow">THE SIGHTING EXPLORER</div><h2 id="section-title">Follow your curiosity.</h2></div><div class="toolbar-actions"><button class="secondary-button mobile-filter-trigger" id="open-filters"><span data-icon="sliders"></span>Filters<span id="mobile-filter-count" class="count-badge" hidden></span></button><button class="secondary-button" id="share-view" aria-label="Share view"><span data-icon="link"></span><span class="action-label">Share view</span></button><button class="secondary-button" id="export-csv" aria-label="Export CSV"><span data-icon="download"></span><span class="action-label">Export CSV</span></button></div></div>
+
+      <div class="workspace-layout" id="workspace-layout">
+        <button id="filter-scrim" class="filter-scrim" aria-label="Close filters" hidden></button>
+        <aside class="filters panel" id="filters" aria-labelledby="filter-heading"><div class="filter-heading"><h3 id="filter-heading"><span data-icon="sliders"></span>Filters</h3><button class="icon-button mobile-only" id="close-filters" aria-label="Close filters">×</button><button class="text-button desktop-only" id="reset-sidebar">Reset</button></div>
+          <label class="field">Country / area<select id="country-filter" aria-label="Country or reported area"></select></label>
+          <label class="field" id="state-field">US state<select id="state-filter" aria-label="US state"></select></label>
+          <div class="field"><span>Occurrence year</span><div class="year-inputs"><label class="sr-only" for="from-filter">From year</label><select id="from-filter"></select><span aria-hidden="true">–</span><label class="sr-only" for="to-filter">To year</label><select id="to-filter"></select></div></div>
+          <div class="field"><span>Reported shape</span><div class="shape-chips" id="shape-chips"></div><label class="sr-only" for="shape-filter">All reported shapes</label><select id="shape-filter"></select></div>
+          <label class="field">Media indicator<select id="media-filter"><option value="">Any media status</option><option value="yes">Media indicated</option><option value="no">No, according to source</option><option value="not_provided">Not provided</option></select></label>
+          <button class="primary-button" id="filter-results"><span data-icon="compass"></span>View matching reports<span id="filter-result-count" class="button-count">886</span></button>
+          <button class="text-button clear-all" id="clear-filters">Clear all filters</button>
+          <div class="filter-note"><span data-icon="info"></span><p>A snapshot of reported observations. Counts reflect this sample, not all sightings.</p></div>
+          <button class="filter-about" data-view="about">How was the data cleaned?<span aria-hidden="true">↗</span></button>
+        </aside>
+
+        <main id="main-content" class="main-content" tabindex="-1">
+          <div class="selection-bar" id="selection-bar"><p id="selection-description">United States · all years · all shapes</p><div class="selection-chips" id="active-filters"></div><span id="result-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></span></div>
+          <div class="metric-grid" id="metric-grid"><div class="metric"><span>Reports in selection</span><strong id="metric-total">—</strong><small>distinct source reports</small></div><div class="metric"><span>Reports on the US map</span><strong id="metric-map">—</strong><small id="metric-map-note">matched to a state</small></div><div class="metric"><span>Usable occurrence dates</span><strong id="metric-time">—</strong><small id="metric-time-note">ready to explore over time</small></div><div class="metric metric-shape"><span>Most reported shape</span><strong id="metric-shape">—</strong><small id="metric-shape-note">in this selection</small></div></div>
+
+          <section class="view" id="view-explore" aria-label="Explore reports">
+            <article class="panel map-panel"><div class="panel-heading"><div><h3><span data-icon="map"></span>Reports by state</h3><p>Pick a state. See the stories behind the count.</p></div><div class="map-legend"><span>Fewer</span><span class="legend-ramp"></span><span>More</span></div></div><div id="state-map" class="map-container"></div><div class="map-footer"><p id="map-coverage"></p><button class="text-button" id="view-state-reports">Browse these reports<span aria-hidden="true">→</span></button></div></article>
+            <div class="chart-pair"><article class="panel chart-card"><div class="panel-heading"><div><h3><span data-icon="clock"></span>When did sightings occur?</h3><p>Reported local hour · click a bar to filter</p></div></div><div id="explore-hourly" class="hourly-chart"></div><div class="chart-footnote" id="hourly-denominator"></div></article><article class="panel chart-card"><div class="panel-heading"><div><h3><span data-icon="shapes"></span>What shapes were reported?</h3><p>Click a shape to take a closer look</p></div></div><div id="explore-shapes" class="shape-bars"></div><button class="text-button chart-link" data-view="patterns">See all patterns<span aria-hidden="true">→</span></button></article></div>
+          </section>
+
+          <section class="view" id="view-patterns" aria-label="Patterns in the reports" hidden><div class="patterns-top"><article class="panel heatmap-panel"><div class="panel-heading"><div><h3><span data-icon="grid"></span>When did reported sightings occur?</h3><p>Month × local hour · click a cell to explore</p></div></div><div id="month-hour-heatmap" class="heatmap-chart"></div><p id="heatmap-denominator" class="chart-footnote"></p></article><article class="panel"><div class="panel-heading"><div><h3><span data-icon="shapes"></span>Shapes in the stories</h3><p>Reported descriptions, in their own categories</p></div></div><div id="patterns-shapes" class="shape-bars shape-bars-tall"></div></article></div><div class="patterns-bottom"><article class="panel timeline-panel"><div class="panel-heading"><div><h3><span data-icon="trend"></span>Reports through the years</h3><p>Occurrence year in this sample · click a year to filter</p></div></div><div id="timeline" class="timeline-chart"></div><p class="chart-footnote">Gaps mean no reports in this sample. The uploader’s selection is not the complete NUFORC archive.</p></article><article class="panel"><div class="panel-heading"><div><h3><span data-icon="globe"></span>Places in the sample</h3><p>Country and reported-area counts</p></div></div><div id="country-bars" class="shape-bars"></div></article></div></section>
+
+          <section class="view" id="view-reports" aria-label="Read sighting reports" hidden><div class="report-tools"><label class="search-field"><span data-icon="search"></span><input id="report-search" type="search" placeholder="Search a place, shape, or story…" aria-label="Search reports"></label><label class="sort-field"><span class="sr-only">Sort reports</span><select id="report-sort"><option value="newest">Newest occurrence first</option><option value="oldest">Oldest occurrence first</option></select></label></div><div class="report-list-heading"><p id="report-count-label"></p><span>Original source accounts</span></div><div id="report-grid" class="report-grid"></div><div class="pagination" id="pagination"><button class="secondary-button" id="previous-page">← Previous</button><span id="page-label"></span><button class="secondary-button" id="next-page">Next →</button></div></section>
+
+          <section class="view" id="view-about" aria-label="About the data" hidden><div id="about-content"></div></section>
+          <div class="context-note" id="context-note"><span data-icon="info"></span><p>These are self-reported observations in a selected sample. They are not verified extraterrestrial events.</p><button class="text-button" data-view="about">About the data<span aria-hidden="true">↗</span></button></div>
+        </main>
+      </div>
+    </div>
+    <footer class="site-footer"><span>UFO OBSERVATORY<span class="footer-dot">·</span>A little curiosity. A lot of data.</span><span>NUFORC report data<span class="footer-dot">·</span>Prepared in Microsoft Fabric</span></footer>
+  </div>
+
+  <nav class="mobile-nav" aria-label="Mobile navigation"><a href="?view=explore" data-view="explore"><span data-icon="compass"></span>Explore</a><a href="?view=patterns" data-view="patterns"><span data-icon="chart"></span>Patterns</a><a href="?view=reports" data-view="reports"><span data-icon="file"></span>Reports</a><a href="?view=about" data-view="about"><span data-icon="info"></span>About</a></nav>
+  <dialog id="report-dialog" class="report-dialog" aria-labelledby="detail-title"><div id="report-detail"></div></dialog>
+  <div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <noscript><p class="noscript-note">This interactive observatory needs JavaScript to explore the report data.</p></noscript>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "",
+  "installCommand": "",
+  "outputDirectory": "dist",
+  "headers": [{"source":"/data/reports/:path*","headers":[{"key":"Content-Encoding","value":"gzip"},{"key":"Content-Type","value":"application/json; charset=utf-8"},{"key":"Cache-Control","value":"public, max-age=0, must-revalidate"}]}]
+}
