@@ -3,6 +3,7 @@ import {escapeHtml as e, icon, shapeIcon, number, hydrateIcons, hideTooltip} fro
 import {renderStateMap, renderHourly, renderShapeBars, renderHeatmap, renderTimeline, renderCountryBars} from './charts.js';
 import {reportCard, reportDetail, aboutContent} from './content.js';
 import {loadReportPartitions} from './data-loader.js';
+import {initSoundControls} from './sound.js';
 
 const $ = id => document.getElementById(id);
 const VIEWS=['explore','patterns','reports','about'];
@@ -44,6 +45,7 @@ function initControls(){
   $('report-dialog').addEventListener('close',()=>{currentReport=null;writeUrl();});
   $('fact-prev').addEventListener('click',()=>{factIndex=(factIndex-1+facts.length)%facts.length;renderFact();});
   $('fact-next').addEventListener('click',()=>{factIndex=(factIndex+1)%facts.length;renderFact();});
+  for (const id of ['fact-prev', 'fact-next']) $(id).disabled = facts.length < 2;
   $('export-csv').addEventListener('click',exportCsv);
   $('share-view').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(location.href);showToast('Link copied — your filters are included.');}catch{showToast('Your filters are in the address bar. Copy that link to share.');}});
   document.addEventListener('click',event=>{const link=event.target.closest('a[data-view],button[data-view]');if(!link)return;event.preventDefault();navigate(link.dataset.view);});
@@ -204,4 +206,5 @@ async function load(){
     document.documentElement.dataset.ready='true';
   }catch(error){console.error(error);$('loading').hidden=true;$('load-error').hidden=false;$('error-message').textContent=error.message;}
 }
+initSoundControls($('sound-toggle'));
 load();

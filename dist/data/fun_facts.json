@@ -1,5 +1,37 @@
 [
   {
+    "id": "what-ufo-means",
+    "title": "What does UFO mean?",
+    "text": "UFO stands for unidentified flying object. It describes something seen in the sky that observers haven’t identified.",
+    "source_title": "U.S. National Archives — Project Blue Book",
+    "source_url": "https://www.archives.gov/research/military/air-force/ufos",
+    "checked_on": "2026-11-05"
+  },
+  {
+    "id": "flying-saucer-name",
+    "title": "Where ‘flying saucer’ came from",
+    "text": "In 1947, pilot Kenneth Arnold compared the motion of objects he saw to saucers skipping on water. Newspapers ran with ‘flying saucers.’",
+    "source_title": "U.S. National Archives — Project Blue Book Anniversary",
+    "source_url": "https://www.archives.gov/news/articles/project-blue-book-50th-anniversary",
+    "checked_on": "2026-11-05"
+  },
+  {
+    "id": "ufo-shapes",
+    "title": "Explore NUFORC’s shape index",
+    "text": "UFO reports come in many shapes. NUFORC’s archive includes triangles, cigars, orbs, disks, and even cubes.",
+    "source_title": "NUFORC — Reports by Shape",
+    "source_url": "https://nuforc.org/ndx/?id=shape",
+    "checked_on": "2026-11-05"
+  },
+  {
+    "id": "al-taqaddum-object",
+    "title": "The Al Taqaddum case",
+    "text": "An object filmed over Iraq in 2017 puzzled observers. U.S. investigators later found it looked and moved like a cluster of balloons.",
+    "source_title": "AARO — Al Taqaddum Case Resolution",
+    "source_url": "https://www.aaro.mil/Portals/136/PDFs/case_resolution_reports/AARO_Al_Taqaddam_Case_Resolution_Final.pdf",
+    "checked_on": "2026-11-05"
+  },
+  {
     "id": "nuforc-founded",
     "title": "A little UFO history",
     "text": "The National UFO Reporting Center was founded in 1974.",
@@ -14,5 +46,37 @@
     "source_title": "NUFORC — About Us",
     "source_url": "https://nuforc.org/about-us/",
     "checked_on": "2026-11-01"
+  },
+  {
+    "id": "project-blue-book",
+    "title": "Project Blue Book",
+    "text": "Project Blue Book received 12,618 UFO reports from 1947 to 1969. The U.S. Air Force classified 701 of them as unidentified.",
+    "source_title": "U.S. National Archives — Project Blue Book",
+    "source_url": "https://www.archives.gov/research/military/air-force/ufos",
+    "checked_on": "2026-11-05"
+  },
+  {
+    "id": "venus-at-twilight",
+    "title": "Why Venus stands out",
+    "text": "Venus can outshine every object in our sky except the Sun and Moon. Look for it near sunrise or sunset.",
+    "source_title": "NASA Science — Venus Facts",
+    "source_url": "https://science.nasa.gov/venus/venus-facts/",
+    "checked_on": "2026-11-05"
+  },
+  {
+    "id": "nasa-uap-study",
+    "title": "How NASA studies UAP",
+    "text": "UAP stands for unidentified anomalous phenomena. In 2023, a NASA study team published recommendations for investigating them.",
+    "source_title": "NASA Science — UAP Independent Study",
+    "source_url": "https://science.nasa.gov/uap/",
+    "checked_on": "2026-11-05"
+  },
+  {
+    "id": "fireball-network",
+    "title": "NASA’s fireball cameras",
+    "text": "A meteor that outshines Venus is called a fireball. NASA has a network of cameras to spot them.",
+    "source_title": "NASA Science — Meteors and Meteorites",
+    "source_url": "https://science.nasa.gov/solar-system/meteors-meteorites/",
+    "checked_on": "2026-11-05"
   }
 ]

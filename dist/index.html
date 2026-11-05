@@ -20,7 +20,17 @@
       <nav class="desktop-nav" aria-label="Main navigation">
         <a href="?view=explore" data-view="explore">Explore</a><a href="?view=patterns" data-view="patterns">Patterns</a><a href="?view=reports" data-view="reports">Reports</a><a href="?view=about" data-view="about">About the data</a>
       </nav>
-      <button class="snapshot-badge" data-view="about"><span class="status-dot"></span>Fabric snapshot<span class="badge-arrow" aria-hidden="true">↗</span></button>
+      <div class="header-actions">
+        <button class="snapshot-badge" data-view="about"><span class="status-dot"></span>Fabric snapshot<span class="badge-arrow" aria-hidden="true">↗</span></button>
+        <button class="sound-toggle" id="sound-toggle" type="button" aria-label="Sound effects" aria-pressed="false" hidden>
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M11 5 6 9H3v6h3l5 4Z"/>
+            <path class="sound-waves" d="M15 9a4 4 0 0 1 0 6m3-9a8 8 0 0 1 0 12"/>
+            <path class="sound-muted" d="m16 9 5 6m0-6-5 6"/>
+          </svg>
+          <span>Sound</span>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -30,7 +40,19 @@
   </section>
 
   <div class="shell">
-    <section class="fact-banner" id="fact-banner" aria-label="UFO fun facts"><img src="./assets/mascot.png" width="110" height="80" alt=""><div class="fact-copy"><div class="eyebrow">COSMIC COFFEE BREAK</div><p id="fact-text">The National UFO Reporting Center was founded in 1974.</p><a id="fact-source" href="https://nuforc.org/about-us/" target="_blank" rel="noopener noreferrer">A little UFO history <span aria-hidden="true">↗</span></a></div><div class="fact-controls"><button id="fact-prev" class="icon-button" aria-label="Previous fun fact">‹</button><span id="fact-position">1 / 2</span><button id="fact-next" class="icon-button" aria-label="Next fun fact">›</button></div></section>
+    <section class="fact-banner" id="fact-banner" aria-label="UFO fun facts">
+      <img src="./assets/mascot.png" width="110" height="80" alt="">
+      <div class="fact-copy">
+        <div class="eyebrow">COSMIC COFFEE BREAK</div>
+        <p id="fact-text" aria-live="polite">UFO stands for unidentified flying object. It describes something seen in the sky that observers haven’t identified.</p>
+        <a id="fact-source" href="https://www.archives.gov/research/military/air-force/ufos" target="_blank" rel="noopener noreferrer">What does UFO mean? <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="fact-controls">
+        <button id="fact-prev" class="icon-button" type="button" aria-label="Previous fun fact" data-sound="alien" disabled>‹</button>
+        <span id="fact-position"></span>
+        <button id="fact-next" class="icon-button" type="button" aria-label="Next fun fact" data-sound="alien" disabled>›</button>
+      </div>
+    </section>
 
     <div id="loading" class="loading-panel" role="status"><div class="orbit-loader" aria-hidden="true"></div><h2>Opening the observatory…</h2><p>Bringing your Fabric data into view.</p></div>
     <div id="load-error" class="empty-state" hidden><h2>The data couldn’t be loaded.</h2><p id="error-message">Check your connection and try again.</p><button class="primary-button" onclick="location.reload()">Try again</button></div>

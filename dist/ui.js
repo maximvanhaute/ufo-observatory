@@ -1,3 +1,5 @@
+import {playSound} from './sound.js';
+
 export const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const paths = {
   compass:'<circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5 5-3Z"/>',
@@ -47,6 +49,7 @@ export function bindMark(element, {label, tooltip, action, tabIndex = 0}) {
   element.addEventListener('pointerleave', hideTooltip);
   element.addEventListener('focus', event => showTooltip(event, tooltip));
   element.addEventListener('blur', hideTooltip);
-  element.addEventListener('click', () => {hideTooltip(); action();});
-  element.addEventListener('keydown', event => {if (event.key === 'Enter' || event.key === ' ') {event.preventDefault(); hideTooltip(); action();}});
+  const activate = () => {hideTooltip(); void playSound('radar'); action();};
+  element.addEventListener('click', activate);
+  element.addEventListener('keydown', event => {if (event.key === 'Enter' || event.key === ' ') {event.preventDefault(); activate();}});
 }
