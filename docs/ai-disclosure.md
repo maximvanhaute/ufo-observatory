@@ -17,6 +17,6 @@ These checks were themselves assisted by code and tools. We distinguish a comple
 
 ## What we preserve
 
-We use the supplied source accounts rather than AI-written sighting stories. We resolve ambiguous date order using original report IDs and a pinned reference, not a model's guess. We leave missing summaries missing, retain source media labels, and do not invent durations, witness locations, or explanations. Our artwork is decorative and does not depict evidence for an actual report.
+We use the supplied source accounts rather than AI-written sighting stories. We use the group’s corrected Date_Fixed and TimeOnly columns for the current export. Our earlier export used original report IDs and a pinned reference to resolve mixed date order. We leave missing summaries missing, retain source media labels, and do not invent durations, witness locations, or explanations. Our artwork is decorative and does not depict evidence for an actual report.
 
 We remain responsible for reviewing the implementation, explaining the data-management decisions, checking conclusions, and presenting our own learning. This disclosure records the AI contributions we know about; it is not a claim that all review or presentation work has already been completed.

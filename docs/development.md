@@ -21,47 +21,26 @@ Our server binds to `127.0.0.1` and serves `dist/`. It sets `Content-Encoding: g
 We run the existing regression checks with:
 
 ```sh
-node --test tests/data-engine.test.mjs
+node --test tests/*.test.mjs
 ```
 
 We use [`verification.md`](verification.md) to record what we checked and on which snapshot. A passing test suite does not replace inspection of browser interactions or independent reconciliation against the supplied input.
 
 ## Updating our data
 
-We keep a new Fabric export outside Git and use the adapter from the repository root:
+We keep the raw files outside Git and run the adapter from the repository root:
 
 ```sh
-python3 scripts/import_final_dataset.py /path/to/Final_Dataset.json
-node --test tests/data-engine.test.mjs
+python3 scripts/import_final_dataset.py "/path/to/Final File Swear on god for now!.json" \
+  --population /path/to/State_Population.json
+node --test tests/*.test.mjs
 ```
 
-The adapter replaces the generated report partitions, index, manifest, summaries, and import-check record in place. It expects the current [input fields](data-preparation.md#our-app-adapter), US-labelled records, unique numeric IDs, matching source links, and a date reference for every ID. We run it with ordinary Python, not optimisation mode, because it uses assertions for several checks.
+The adapter reads JSON arrays or newline-delimited objects. For corrected exports, it uses Date_Fixed and TimeOnly (or Only_Time), preserves the original corrected strings, checks IDs and source links, and joins population by state and occurrence year. It validates the input before generating the report partitions, population dimension, manifest, summaries, and import-check record. We run ordinary Python because several existing checks use assertions.
 
-Our committed reference covers the current set of report IDs. New IDs require a verified replacement reference before import. We can select that reference with:
+We treat the generated files as one snapshot and review the source fingerprint, row counts, date exclusions, population coverage, and browser output before release. Our previous-schema import remains supported with the pinned reference and optional `--reference-dates` argument. The current corrected schema does not require that reference.
 
-```sh
-python3 scripts/import_final_dataset.py /path/to/Final_Dataset.json \
-  --reference-dates /path/to/reference-dates.json.gz
-```
-
-We store that lookup as a gzip-compressed JSON object, with each original ID mapped to its occurrence date and reporting date:
-
-```json
-{
-  "196439": ["2026-03-06", "2026-03-06"]
-}
-```
-
-Before committing a replacement snapshot, we:
-
-1. Review the input count, IDs, schema, source fingerprint, and date-reference provenance.
-2. Reconcile the generated records and aggregates with the new input and examine date and map exclusions.
-3. Review changed files with `git diff --stat` and check the output in `docs/dataset-import-checks.json`.
-4. Update snapshot-specific test expectations only after independently validating the new totals. We keep the tests for filtering, date handling, CSV escaping, and incomplete partitions.
-5. Check desktop and mobile loading, filters, report details, original links, and a filtered CSV export.
-6. Update our README and preparation/verification records to describe the same snapshot.
-
-Our source metadata currently contains the 3 November 2026 snapshot label and Fabric table URL. A different source or later export also requires us to update that metadata in the adapter; it is not inferred automatically. We review the complete snapshot before release because its files form one matching set.
+When updating the source or its fields, we update the adapter metadata and review the population source description. The current snapshot is labelled 7 November 2026. Original source files remain outside Git. We include the population dimension and prepared records in the deployment.
 
 ## Our Vercel configuration
 
@@ -82,7 +61,7 @@ Our verified 3 November release was created from GitHub commit `c48d81b2f89c4c7d
 
 We do not assume that every GitHub push automatically updates production. We confirm the project's Git connection and production-branch settings in Vercel before relying on that workflow. When releasing, we select the intended project and reviewed commit, inspect its deployment status, and check the production URL after it becomes ready.
 
-For the current snapshot, our initial live counts should be 139,903 reports, 139,687 mapped reports, and 139,888 eligible occurrence dates. We also check a filtered selection and its original report link. We record the deployed commit with the verification results.
+For the current snapshot, our initial live counts should be 139,887 reports, 139,671 mapped reports, and 139,872 eligible occurrence dates. We also check a filtered selection and its original report link. We record the deployed commit with the verification results.
 
 ## Common issues we check
 

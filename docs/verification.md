@@ -1,4 +1,38 @@
-# Our verification record
+# Verification record
+
+## Corrected export and population comparison — 7 November 2026
+
+We checked the current corrected source against the complete prepared output by original NUFORC ID. All 139,887 IDs, corrected occurrence dates and times, links, cities, summaries, and media values reconcile with the supplied file. The raw fingerprints are recorded in dataset-import-checks.json and the manifest.
+
+We retained 139,872 time-eligible reports, 139,671 mapped reports, 216 territory reports, and 15 flagged dates. Every prepared report’s population value matches the dimension for its occurrence state and year, or remains null when unavailable.
+
+### Automated checks
+
+We run 19 JavaScript checks and two Python importer checks, including subcases for both TimeOnly and Only_Time. The importer regression uses invalid Date and Date_Corrected values and an unrelated synthetic Time timestamp, and verifies the correct occurrence date and local time still come exclusively from the corrected fields. It also verifies that corrected imports work without the legacy date reference.
+
+We check that duplicate population keys fail, zero reports remain zero with a positive denominator, missing populations remain null, and state selection preserves the comparison. For 2024, the 50 matched state/DC rows contain 3,370 reports. California has 334 reports and 39,431,263 residents, giving 0.85 per 100,000. Montana has 35 reports and 1,137,233 residents, giving 3.08 per 100,000.
+
+### Browser checks
+
+We tested the following through the local app’s controls:
+
+- Population opens from Patterns, with 50 scatter dots and Montana leading the rate ranking.
+- Switching to total reports changes the ranking leader to California and updates map shading.
+- Keyboard selection of Montana highlights it, preserves all comparison points, and opens its 35 reports for 2024.
+- Report details show the matching occurrence-year population.
+- A 2025 selection has 0/51 population coverage, no rate dots, and a visible unavailable-data note.
+- A triangle filter changes the matched 2024 report count to 260 and updates the selected state’s rate.
+- The URL restores the selected state, year, shape, and measure after reload.
+- Export CSV activates the population-specific export. Automated CSV checks verify all 51 state/DC rows and blank denominators for missing population.
+- The original time-and-shape view still renders its 288 heatmap cells.
+- At a 375px phone viewport, document width equals viewport width. The filter drawer, selected-state details, and ranking work.
+- Alaska can be selected on the map while its unavailable population stays explicit.
+
+We observed no browser warnings or errors in those inspected flows. These are sampled interaction checks, alongside full source reconciliation.
+
+We disclose that the population file ends in 2024, lacks recent Alaska values, and has no supplied original publisher or estimation method. Rates describe filtered self-reported accounts.
+
+## Earlier verification records
 
 ## Fabric final export — 3 November 2026
 

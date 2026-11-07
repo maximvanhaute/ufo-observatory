@@ -65,7 +65,7 @@
         <aside class="filters panel" id="filters" aria-labelledby="filter-heading"><div class="filter-heading"><h3 id="filter-heading"><span data-icon="sliders"></span>Filters</h3><button class="icon-button mobile-only" id="close-filters" aria-label="Close filters">×</button><button class="text-button desktop-only" id="reset-sidebar">Reset</button></div>
           <label class="field">Country / area<select id="country-filter" aria-label="Country or reported area"></select></label>
           <label class="field" id="state-field">US state<select id="state-filter" aria-label="US state"></select></label>
-          <div class="field"><span>Occurrence year</span><div class="year-inputs"><label class="sr-only" for="from-filter">From year</label><select id="from-filter"></select><span aria-hidden="true">–</span><label class="sr-only" for="to-filter">To year</label><select id="to-filter"></select></div></div>
+          <div class="field" id="occurrence-year-field"><span>Occurrence year</span><div class="year-inputs"><label class="sr-only" for="from-filter">From year</label><select id="from-filter"></select><span aria-hidden="true">–</span><label class="sr-only" for="to-filter">To year</label><select id="to-filter"></select></div></div>
           <div class="field"><span>Reported shape</span><div class="shape-chips" id="shape-chips"></div><label class="sr-only" for="shape-filter">All reported shapes</label><select id="shape-filter"></select></div>
           <label class="field">Media indicator<select id="media-filter"><option value="">Any media status</option><option value="yes">Media indicated</option><option value="no">No, according to source</option><option value="not_provided">Not provided</option></select></label>
           <button class="primary-button" id="filter-results"><span data-icon="compass"></span>View matching reports<span id="filter-result-count" class="button-count">886</span></button>
@@ -83,7 +83,57 @@
             <div class="chart-pair"><article class="panel chart-card"><div class="panel-heading"><div><h3><span data-icon="clock"></span>When did sightings occur?</h3><p>Reported local hour · click a bar to filter</p></div></div><div id="explore-hourly" class="hourly-chart"></div><div class="chart-footnote" id="hourly-denominator"></div></article><article class="panel chart-card"><div class="panel-heading"><div><h3><span data-icon="shapes"></span>What shapes were reported?</h3><p>Click a shape to take a closer look</p></div></div><div id="explore-shapes" class="shape-bars"></div><button class="text-button chart-link" data-view="patterns">See all patterns<span aria-hidden="true">→</span></button></article></div>
           </section>
 
-          <section class="view" id="view-patterns" aria-label="Patterns in the reports" hidden><div class="patterns-top"><article class="panel heatmap-panel"><div class="panel-heading"><div><h3><span data-icon="grid"></span>When did reported sightings occur?</h3><p>Month × local hour · click a cell to explore</p></div></div><div id="month-hour-heatmap" class="heatmap-chart"></div><p id="heatmap-denominator" class="chart-footnote"></p></article><article class="panel"><div class="panel-heading"><div><h3><span data-icon="shapes"></span>Shapes in the stories</h3><p>Reported descriptions, in their own categories</p></div></div><div id="patterns-shapes" class="shape-bars shape-bars-tall"></div></article></div><div class="patterns-bottom"><article class="panel timeline-panel"><div class="panel-heading"><div><h3><span data-icon="trend"></span>Reports through the years</h3><p>Occurrence year in this sample · click a year to filter</p></div></div><div id="timeline" class="timeline-chart"></div><p class="chart-footnote">Gaps mean no reports in this sample. The uploader’s selection is not the complete NUFORC archive.</p></article><article class="panel"><div class="panel-heading"><div><h3><span data-icon="globe"></span>Places in the sample</h3><p>Country and reported-area counts</p></div></div><div id="country-bars" class="shape-bars"></div></article></div></section>
+          <section class="view" id="view-patterns" aria-label="Patterns in the reports" hidden><div class="pattern-tabs" role="group" aria-label="Pattern view">
+  <button type="button" data-pattern-tab="time" aria-pressed="true" aria-controls="pattern-time-panel">Time &amp; shapes</button>
+  <button type="button" data-pattern-tab="population" aria-pressed="false" aria-controls="pattern-population-panel">Population</button>
+</div>
+<div id="pattern-time-panel"><div class="patterns-top"><article class="panel heatmap-panel"><div class="panel-heading"><div><h3><span data-icon="grid"></span>When did reported sightings occur?</h3><p>Month × local hour · click a cell to explore</p></div></div><div id="month-hour-heatmap" class="heatmap-chart"></div><p id="heatmap-denominator" class="chart-footnote"></p></article><article class="panel"><div class="panel-heading"><div><h3><span data-icon="shapes"></span>Shapes in the stories</h3><p>Reported descriptions, in their own categories</p></div></div><div id="patterns-shapes" class="shape-bars shape-bars-tall"></div></article></div><div class="patterns-bottom"><article class="panel timeline-panel"><div class="panel-heading"><div><h3><span data-icon="trend"></span>Reports through the years</h3><p>Occurrence year in this sample · click a year to filter</p></div></div><div id="timeline" class="timeline-chart"></div><p class="chart-footnote">Gaps mean no reports in this sample. The uploader’s selection is not the complete NUFORC archive.</p></article><article class="panel"><div class="panel-heading"><div><h3><span data-icon="globe"></span>Places in the sample</h3><p>Country and reported-area counts</p></div></div><div id="country-bars" class="shape-bars"></div></article></div></div><div id="pattern-population-panel" hidden>
+  <div class="population-toolbar">
+    <div><p class="eyebrow">MORE PEOPLE. MORE REPORTS?</p><p id="population-period"></p></div>
+    <label class="population-year-label">Occurrence year<select id="population-year" aria-label="Population comparison year"></select></label>
+  </div>
+  <div class="metric-grid population-metrics">
+    <div class="metric"><span>Reports compared</span><strong id="population-count">—</strong><small id="population-match-note"></small></div>
+    <div class="metric"><span>State / DC population coverage</span><strong id="population-coverage">—</strong><small id="population-coverage-caption">Matched for this year</small></div>
+    <div class="metric"><span>Most reports</span><strong class="population-leader" id="population-volume-leader">—</strong><small id="population-volume-value"></small></div>
+    <div class="metric"><span>Highest per capita</span><strong class="population-leader" id="population-rate-leader">—</strong><small id="population-rate-value"></small></div>
+  </div>
+  <div class="population-selected" id="population-selected" hidden>
+    <div><h3 id="population-selected-title" tabindex="-1"></h3><p id="population-selected-values"></p></div>
+    <button type="button" class="secondary-button" id="population-read-reports">Read this state’s reports <span aria-hidden="true">→</span></button>
+  </div>
+  <div class="population-chart-grid">
+    <article class="panel population-scatter-panel">
+      <div class="panel-heading"><div><h3>Does population explain the count?</h3><p>Each dot is a state or DC. Select one to explore.</p></div></div>
+      <div class="population-reference-key"><span aria-hidden="true"></span>Same reports per resident · matched-area average</div>
+      <div id="population-scatter"></div>
+      <p class="chart-footnote">Population and occurrence year are matched. The dashed line is a proportional reference, rather than a fitted trend.</p>
+    </article>
+    <article class="panel population-ranking-panel">
+      <div class="panel-heading"><div><h3>Where do reports stand out?</h3><p id="population-rank-unit"></p></div></div>
+      <div class="population-mode" role="group" aria-label="Population comparison measure">
+        <button type="button" data-population-mode="count" aria-pressed="false">Total reports</button>
+        <button type="button" data-population-mode="rate" aria-pressed="true">Per 100k</button>
+      </div>
+      <div id="population-ranking" class="population-ranking" aria-label="State ranking"></div>
+      <p id="population-insight" class="population-insight" aria-live="polite"></p>
+    </article>
+  </div>
+  <article class="panel population-map-panel">
+    <div class="panel-heading"><div><h3>How does the picture change?</h3><p id="population-map-unit"></p></div>
+      <div class="map-legend"><span>Fewer</span><span class="legend-ramp"></span><span>More</span></div>
+    </div>
+    <div id="population-map" class="map-container"></div>
+  </article>
+  <p id="population-coverage-note" class="population-coverage-note"></p>
+  <details class="population-method">
+    <summary>How we calculate the comparison</summary>
+    <p>Reports per 100,000 residents = filtered reports in the selected occurrence year ÷ that state’s population in the same year × 100,000. Population is used once per state and year. A state with population data and no matching reports has a rate of zero.</p>
+    <p>Shape, month, local hour, media and search filters change the report count. The denominator remains the full population for that year. These filtered rates describe self-reported accounts. Population alone cannot establish what caused a sighting or a report.</p>
+    <p>Population source is the group-supplied State_Population.json, covering years through 2024. Its original publisher and estimation method have yet to be supplied. Washington, DC is mapped by its full name. We keep missing populations unavailable, with no interpolation or use of another year.</p>
+    <p>The state comparison and its CSV cover the 50 states and Washington, DC. Territory reports remain in the report explorer. The CSV includes unmatched states with an empty population and rate, and a coverage status.</p>
+  </details>
+</div></section>
 
           <section class="view" id="view-reports" aria-label="Read sighting reports" hidden><div class="report-tools"><label class="search-field"><span data-icon="search"></span><input id="report-search" type="search" placeholder="Search a place, shape, or story…" aria-label="Search reports"></label><label class="sort-field"><span class="sr-only">Sort reports</span><select id="report-sort"><option value="newest">Newest occurrence first</option><option value="oldest">Oldest occurrence first</option></select></label></div><div class="report-list-heading"><p id="report-count-label"></p><span>Original source accounts</span></div><div id="report-grid" class="report-grid"></div><div class="pagination" id="pagination"><button class="secondary-button" id="previous-page">← Previous</button><span id="page-label"></span><button class="secondary-button" id="next-page">Next →</button></div></section>
 

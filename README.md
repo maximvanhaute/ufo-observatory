@@ -12,6 +12,7 @@ We use the app to:
 
 - Select a state on our map and compare report counts.
 - Explore occurrence years, months, local hours, and reported shapes with linked charts.
+- Compare state populations with report counts, switch the ranking and map to reports per 100,000 residents, and open the selected state’s reports.
 - Search summaries, read individual records, and follow their original NUFORC links.
 - Combine filters, share a filtered URL, and export the selected reports as CSV.
 - Use the same views on desktop and mobile, with an alien mascot and sourced UFO fun facts.
@@ -20,21 +21,29 @@ We interpret these as patterns in **self-reported accounts**. A report does not 
 
 ## Our current data
 
-We use `Final_Dataset.json`, our cleaned export from Fabric table `dbo.UFO_Sighting`, received on **3 November 2026**. Our app serves this snapshot; it does not query Fabric live.
+We use `Final File Swear on god for now!.json`, the group’s corrected Fabric export, received on **7 November 2026**, alongside `State_Population.json`. Our app serves this snapshot; it does not query Fabric live.
 
 | Measure | Current snapshot |
 | --- | ---: |
-| Unique report IDs retained | 139,903 |
-| Reports mapped to the 50 US states and Washington, DC | 139,687 |
+| Unique report IDs retained | 139,887 |
+| Reports mapped to the 50 US states and Washington, DC | 139,671 |
 | Territory reports retained outside that map | 216 |
-| Reports eligible for time charts | 139,888 |
+| Reports eligible for time charts | 139,872 |
 | Pre-1900 dates retained with a review flag | 15 |
 | Reports without a supplied summary | 68 |
-| Source indicates media: Yes / No | 6,840 / 133,063 |
+| Source indicates media: Yes / No | 6,836 / 133,051 |
 
 Our usable occurrence dates span **6 July 1905 to 6 March 2026**. We preserve every supplied report ID and source link. We keep missing summaries missing, retain the source's `Unknown/Other` shape category, and distinguish an explicit `No` media label from missing information.
 
-We found mixed month/day and day/month formats in the export. We resolve each date against a pinned reference using its original NUFORC ID, preserve the exported date text, and stop the import if a date cannot be reconciled. We explain our rules and source fingerprints in [our data preparation guide](docs/data-preparation.md).
+We use `Date_Fixed` in month-day-year order and the supplied `TimeOnly` values. We ignore `Date`, `Time`, and `Date_Corrected`. Our adapter also supports the spelling `Only_Time`. Both supplied files contain one JSON object per line. We retain population as a separate state/year dimension and also add the matching `state_population` to each report. We explain our rules and source fingerprints in [our data preparation guide](docs/data-preparation.md).
+
+## Our population comparison
+
+We open **Patterns → Population** and choose one occurrence year. We start with **2024**, the latest population year. The scatter plot compares population against report count. We can switch the ranking and map between total reports and reports per 100,000 residents. Selecting a state highlights it across the comparison and offers its source reports.
+
+We join population on **state code + occurrence year** and use each state-year denominator once. Our rate is the filtered report count divided by that state’s population in the same year, multiplied by 100,000. Shape, month, local hour, media, and search filters affect the count. State selection highlights the comparison rather than reducing it to one point. Our CSV includes counts, denominators, rates, and unmatched-state status.
+
+For 2024, we compare **3,370 reports across 49 states and DC**. California has 334 reports (0.85 per 100,000), and Montana has 35 (3.08 per 100,000). Alaska’s recent population is missing from the supplied file. Population stops at 2024, so we show an unavailable state for 2025–2026. We fill DC’s abbreviation from its exact full name. The population file’s original publisher and estimation method remain unprovided and are disclosed in the app.
 
 ## Run our app locally
 
@@ -51,23 +60,23 @@ We then open **http://127.0.0.1:4173**. Our supplied server sets the gzip header
 We run our automated checks with:
 
 ```sh
-node --test tests/data-engine.test.mjs
+node --test tests/*.test.mjs
 ```
 
-Our current suite has **12 tests**. Our [verification record](docs/verification.md) distinguishes automated checks, full source reconciliation, and sampled browser checks.
+Our current suite has **19 JavaScript checks and two Python importer checks**. We run the Python checks with `python3 -m unittest discover -s tests -p "test_*.py"`, or run both suites with `npm test`. Our [verification record](docs/verification.md) distinguishes automated checks, full source reconciliation, and sampled browser checks.
 
 ## How our data reaches the app
 
 ```mermaid
 flowchart LR
-  Fabric["Fabric: dbo.UFO_Sighting"] --> Export["Final_Dataset.json"]
+  Fabric["Fabric: dbo.UFO_Sighting"] --> Export["Corrected sighting export"]
   Export --> Adapter["Python data adapter"]
-  Reference["Pinned dates by NUFORC ID"] --> Adapter
+  Population["State_Population.json"] --> Adapter
   Adapter --> Snapshot["Compressed reports, metadata and summaries"]
   Snapshot --> App["Browser app hosted on Vercel"]
 ```
 
-We commit the generated snapshot and the code needed to load it. We keep the original `Final_Dataset.json` outside Git. We use 14 compressed report partitions, each containing at most 10,000 records, to keep individual files manageable. Our browser recomputes chart counts from the filtered report records.
+We commit the generated snapshot and the code needed to load it. We keep the original `Corrected sighting export` outside Git. We use 14 compressed report partitions, each containing at most 10,000 records, to keep individual files manageable. Our browser recomputes chart counts from the filtered report records.
 
 ## Our repository
 
@@ -76,7 +85,7 @@ We commit the generated snapshot and the code needed to load it. We keep the ori
 | `dist/` | Our deployable HTML, CSS, JavaScript, and visual assets |
 | `dist/data/` | Our generated snapshot, metadata, summaries, facts, and Census boundaries |
 | `scripts/import_final_dataset.py` | Our Fabric-export adapter and date checks |
-| `scripts/reference-dates.json.gz` | Our pinned date-only lookup by original report ID |
+| `scripts/reference-dates.json.gz` | Date-only lookup retained for reproducing our previous export |
 | `scripts/serve.mjs` | Our local server, including gzip response headers |
 | `tests/` | Our data-engine and loader regression checks |
 | `docs/` | Our preparation rules, validation evidence, release steps, and AI disclosure |

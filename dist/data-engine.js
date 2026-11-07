@@ -66,7 +66,7 @@ export function formatOccurrence(record, withTime = false) {
 }
 
 export function reportsToCsv(reports) {
-  const columns = ['report_id','occurred_at_local','city','state_name','country_name','shape_name','summary','media_status','explanation_category','explanation_certainty','quality_flags','source_url'];
+  const columns = ['report_id','occurred_at_local','city','state_name','country_name','shape_name','summary','media_status','state_population','population_year','population_status','explanation_category','explanation_certainty','quality_flags','source_url'];
   const cell = value => { let v = Array.isArray(value) ? value.join('|') : String(value ?? ''); if (/^[=+@-]/.test(v)) v = "'" + v; return '"' + v.replaceAll('"', '""') + '"'; };
   return '\uFEFF' + [columns.join(','), ...reports.map(r => columns.map(c => cell(r[c])).join(','))].join('\r\n');
 }

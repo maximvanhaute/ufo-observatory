@@ -6,22 +6,26 @@ const chartSize = (element, height) => ({width: Math.max(280, element.clientWidt
 const clear = element => {element.replaceChildren(); hideTooltip();};
 function empty(element, message) {element.innerHTML = `<div class="chart-empty">${e(message)}</div>`;}
 
-export function renderStateMap(element, geometry, stats, filters, onState, onCountry) {
+export function renderStateMap(element, geometry, stats, filters, onState, onCountry, options = {}) {
   clear(element);
   const d3 = window.d3, W = 960, H = 555;
-  const svg = node('svg', {viewBox:`0 0 ${W} ${H}`,class:'map-svg','aria-label':'Interactive map of reports by US state'});
+  const svg = node('svg', {viewBox:`0 0 ${W} ${H}`,class:'map-svg','aria-label':options.label || 'Interactive map of reports by US state'});
   const projection = d3.geoAlbersUsa().fitExtent([[28, 18], [W-28, H-25]], geometry);
   const path = d3.geoPath(projection), group = node('g');
-  const max = Math.max(1,...stats.states.values());
+  const values = options.values || stats.states;
+  const max = Math.max(1,...values.values());
   const color = d3.interpolateRgb('#163347', '#b9f56c');
   for (const feature of geometry.features) {
     const count = stats.states.get(feature.id) || 0;
-    const shape = node('path', {d:path(feature) || '',class:`state-path${filters.state === feature.id ? ' is-selected' : ''}`,fill:count ? color(Math.sqrt(count/max)) : '#102a3b','data-state':feature.id,'aria-pressed':String(filters.state===feature.id)});
-    bindMark(shape,{label:`${feature.properties.state_name}: ${number(count)} reports. ${filters.state===feature.id?'Clear state filter.':'Filter by this state.'}`,tooltip:`${feature.properties.state_name}\n${number(count)} ${count===1?'report':'reports'} in this selection\nClick to ${filters.state===feature.id?'clear':'explore'}`,action:()=>onState(feature.id)});
+    const value = values.get(feature.id) || 0;
+    const missing = Boolean(options.values) && !values.has(feature.id);
+    const tooltip = options.tooltip ? options.tooltip(feature.id) : `${feature.properties.state_name}\n${number(count)} ${count===1?'report':'reports'} in this selection\nClick to ${filters.state===feature.id?'clear':'explore'}`;
+    const shape = node('path', {d:path(feature) || '',class:`state-path${missing ? ' population-missing' : ''}${filters.state === feature.id ? ' is-selected' : ''}`,fill:missing ? '#34424e' : value ? color(Math.sqrt(value/max)) : '#102a3b','data-state':feature.id,'aria-pressed':String(filters.state===feature.id)});
+    bindMark(shape,{label:tooltip.replaceAll('\n','. ') + '. Select state.',tooltip,action:()=>onState(feature.id)});
     group.append(shape);
     const center = path.centroid(feature);
     if (path.area(feature) > 700 && center.every(Number.isFinite)) {
-      group.append(node('text',{x:center[0],y:center[1],fill: count > max*.3 ? '#122a2d' : '#a2bdcb','font-size':'11','font-weight':'600','text-anchor':'middle','dominant-baseline':'middle','pointer-events':'none'},feature.id));
+      group.append(node('text',{x:center[0],y:center[1],fill: value > max*.3 ? '#122a2d' : '#a2bdcb','font-size':'11','font-weight':'600','text-anchor':'middle','dominant-baseline':'middle','pointer-events':'none'},feature.id));
     }
   }
   svg.append(group); element.append(svg);
@@ -34,7 +38,7 @@ export function renderStateMap(element, geometry, stats, filters, onState, onCou
     const overlay = document.createElement('div'); overlay.className='map-empty-overlay';
     overlay.innerHTML='<h4>This map explores US states.</h4><p>Your charts and stories still reflect the selected country or area.</p><button class="primary-button">Explore the United States</button>';
     overlay.querySelector('button').addEventListener('click',()=>onCountry('US')); element.append(overlay);
-  } else if (!stats.total) {
+  } else if (!stats.total && !options.values) {
     const overlay=document.createElement('div');overlay.className='map-empty-overlay';overlay.innerHTML='<h4>No reports match these filters.</h4><p>Try a wider year range or a different shape.</p>';element.append(overlay);
   }
 }

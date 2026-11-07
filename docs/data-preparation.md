@@ -1,101 +1,73 @@
-# Our data preparation
+# How we prepare our app data
 
-We separate our upstream cleaning in Microsoft Fabric from the adapter that prepares our final export for the web app. This distinction lets us explain which changes happened at each stage and which totals we have independently checked.
+## Our current sources
 
-## Our source and lineage
+We received the corrected sighting export and a population file on 7 November 2026. Both are newline-delimited JSON, with one object per line.
 
-| Item | Our current source |
-| --- | --- |
-| Original reporting organisation | [National UFO Reporting Center](https://nuforc.org/) |
-| Fabric table | `dbo.UFO_Sighting` |
-| Supplied export | `Final_Dataset.json` |
-| Snapshot received | 3 November 2026 |
-| Date-reference origin | Previously downloaded [NUFORC JSON snapshot](https://github.com/christopherrobin/nuforc-scraper) |
-| Map boundaries | US Census Bureau, 2024 cartographic state boundaries at 1:20 million |
+| Input | Grain | Records |
+| --- | --- | ---: |
+| Final File Swear on god for now!.json | One report per original NUFORC ID | 139,887 |
+| State_Population.json | One state and year | 6,579 |
 
-We keep the Fabric lineage URL, boundary source, and source fingerprints in [`manifest.json`](../dist/data/manifest.json). Opening the Fabric link requires the reader's own workspace permissions. Our website does not contain Fabric credentials or access the lakehouse at runtime.
+Our existing Fabric lineage points to dbo.UFO_Sighting. We retain that link and the source fingerprints in the app manifest. The population file’s original publisher and estimation method were not supplied. We disclose that gap in the Population tab and About view.
 
-We identify the exact inputs with SHA-256 fingerprints:
+## Our date contract
+
+We use **Date_Fixed** for occurrence dates and **TimeOnly** for local clock time. The user referred to Only_Time, while the supplied field is TimeOnly. Our adapter supports both spellings and rejects conflicting values when both are present.
+
+We ignore the original Date and Time columns and the Date_Corrected column. We parse Date_Fixed in month-day-year order, accepting hyphens and slashes. We parse TimeOnly as HH:MM:SS, combine it with Date_Fixed, and preserve its seconds without timezone conversion. The synthetic date carried in the original Time column has no influence on occurrence dates or charts.
+
+We parse ReportedDate separately in month-day-year order and preserve it as reporting metadata. It is never used as the occurrence year or the population join year.
+
+We retain 15 pre-1900 records with a suspicious_year flag. They remain available as reports and are excluded from time charts and time-based filters. The current snapshot has **139,872 usable occurrence dates**, spanning 6 July 1905 through 6 March 2026.
+
+Our previous 3 November export had 139,903 reports and mixed MDY/DMY dates. That historical import used a pinned original-ID date reference. We retain support for that older input schema, but the corrected export uses the group-designated fields directly.
+
+## Our population join
+
+We retain population as a dimension keyed by **state_code + year**. We map the 135 District of Columbia records without abbreviations to DC using the exact full name. We reject duplicate keys, unknown states, and non-positive populations. These checks prevent a many-to-many join from multiplying reports.
+
+For each time-eligible report, we join its state and occurrence year to that dimension. We add state_population, population_year, and population_status. A missing match has a null population and an explicit status. We preserve the original report grain and every supplied ID.
+
+We use each denominator once when calculating the comparison:
 
 ```text
-Final_Dataset.json
-e8fee608e876cb9ad8a97d097586693deae6b753cf7ae57f469021028d0f39a7
-
-Original downloaded JSON used to prepare our date-only reference
-638d81fd889d2170a3c14f7da06b1877d838df35c626e306982fa09c61b3f941
+reports per 100,000 residents =
+  filtered reports for a state and occurrence year
+  / population of that state in the same year
+  * 100,000
 ```
 
-The compressed reference file's own fingerprint is also recorded in the manifest. We retain the date lookup in Git so that reproducing our current snapshot does not depend on a fresh download of a changing source.
+We include zero-report states when their population is available. We keep missing population distinct from zero and apply no interpolation, carry-forward, or population from a different year.
 
-## Our upstream cleaning
+The population file ends in 2024. Alaska has no recent population values in the supplied file. For 2024, we match 49 states plus DC and compare **3,370 reports**. We exclude 15 Alaska reports and one US Virgin Islands report from that population comparison. Territory reports and Alaska reports remain available in the report explorer. The map shows unavailable state populations in gray with dashed borders.
 
-Our [original cleaning notes](Data%20Cleaning%20Steps.docx) describe how we:
+Across the complete export, 135,472 reports have a population match, 4,400 time-eligible reports lack a state-year match, and 15 have flagged dates. These categories sum to 139,887.
 
-- Removed records with missing country information, retained US-labelled records, removed duplicate sightings, and removed vague or blank city values.
-- Standardised state abbreviations and media labels, and converted relative report links into complete URLs.
-- Consolidated shapes into 19 categories, including `Unknown/Other`.
-- Tidied summary whitespace and punctuation, separated occurrence dates and times, and removed the explanation column.
+## Our interactive comparison
 
-Our notes report **159,485 starting rows**, **19,582 removals**, and **139,903 retained rows**. We have independently reconciled the retained export; we have not reconstructed each upstream removal from that file. The separate downloaded snapshot used for our date reference contained 159,538 records. We do not treat those different recorded starting totals as interchangeable.
+We use a single occurrence year to keep denominators comparable. We preserve the shape, month, local hour, media, and text-search filters. They affect the report count, while the denominator remains the full population for that year. We describe rates as filtered reports per resident, with no annualisation of selected months or hours.
 
-## Our app adapter
+We compare all states and highlight the selected state. This keeps the scatter plot and ranking useful while users read the selected state’s reports. The count/rate switch affects both the ranking and the map. The scatter always uses population and report count, with a reference line based on the weighted rate across matched areas. The line is a proportional comparison rather than a regression.
 
-We run [`import_final_dataset.py`](../scripts/import_final_dataset.py) on the final Fabric export. We retain all **139,903** input records and check that their IDs are unique and their links agree with those IDs. We do not remove more records or infer additional sightings.
+Shared URLs preserve the Population tab, occurrence year, measure, state, and report filters. The population CSV includes all 51 state/DC rows, including missing denominators and coverage status.
 
-| Supplied field | How we use it |
-| --- | --- |
-| `ID` | We create a stable app key such as `nuforc-196439`. |
-| `Article Link` | We preserve the original URL and check its report number against `ID`. |
-| `City` | We preserve the supplied city. |
-| `State` | We normalise letter case and look up state names and map eligibility. |
-| `Country` | We check that its normalised value is `USA` and use country key `US`. |
-| `Shape` | We normalise case and retain the combined `Unknown/Other` classification. |
-| `Date` and `Time` | We resolve date order by ID and preserve the recorded local hour and minute. |
-| `Reported Date` | We resolve it separately from the occurrence date. |
-| `Media Available` | We convert `Yes` and `No` to explicit boolean values and matching status labels. |
-| `Summary` | We preserve supplied text; 68 missing summaries remain missing. |
+## Our other preparation rules
 
-We keep `source_occurrence_date_raw`, `source_occurrence_time_raw`, and `source_reported_date_raw` alongside the prepared fields. We store no inferred duration, explanation, or witness coordinates.
+We retain all 139,887 unique original IDs and validate each source link against its ID. We normalise state and shape keys for display. We preserve source summaries and explicit Yes/No media values.
 
-## How we resolve dates
+We map 139,671 reports to the 50 states plus DC. We retain 216 territory reports outside those polygons. We retain the 68 missing summaries as missing. Media labels are 6,836 Yes and 133,051 No.
 
-Our cleaning notes describe a consistent US date format, but the exported strings still mix MDY and DMY. We check both interpretations against the date associated with the same original NUFORC ID in our pinned reference.
+Our original group cleaning notes describe an earlier stage of work, including 159,485 starting rows and 19,582 removals. We preserve those notes in Data Cleaning Steps.docx. We do not use those historical figures to claim we independently reconstructed the current export’s upstream removals.
 
-| Export field | MDY interpretation | DMY interpretation | Same day and month |
-| --- | ---: | ---: | ---: |
-| Occurrence date | 82,814 | 51,736 | 5,353 |
-| Reporting date | 84,351 | 50,627 | 4,925 |
+## Reproducing our snapshot
 
-Each row in this table sums to 139,903. When day and month are equal, both interpretations yield the same date. We stop the import when no interpretation agrees with the reference, rather than selecting a date according to the computer's locale.
+```sh
+python3 scripts/import_final_dataset.py "/path/to/Final File Swear on god for now!.json" \
+  --population /path/to/State_Population.json
+node --test tests/*.test.mjs
+```
 
-For example, our export gives report `196439` as `06/03/2026`. Its original-ID reference confirms **6 March 2026**, so we store occurrence `2026-03-06T22:46:00` while retaining the supplied string. We do not convert the local time to UTC.
+We record raw-file SHA-256 fingerprints and output counts in the manifest and dataset-import-checks.json. We serve 14 gzip-compressed report partitions, population.json, manifest.json, and summaries.json. The browser recomputes chart values from these prepared records.
 
-Our time-analysis rule accepts occurrence years from **1900 through the year in which we run the import**. In this snapshot, 15 records have pre-1900 dates. We retain those reports and their original date strings, mark them `suspicious_year`, and exclude them from time charts and time-based filters. Their prepared time components are null. This leaves 139,888 eligible records.
-
-## Map coverage and missing information
-
-We map **139,687** reports to the 50 states and Washington, DC. We retain **216** territory records outside those polygons: Puerto Rico (192), US Virgin Islands (20), Guam (3), and US Minor Outlying Islands (1). Their `outside_map_scope` flag records a coverage limitation rather than a failed or deleted report.
-
-We also flag missing summaries as `summary_missing`. Our flags may overlap, so we do not add their counts to estimate a number of excluded reports.
-
-We retain these distinctions:
-
-- A missing summary is not an empty invented account.
-- An explicit `No` media label is a source value, not proof that evidence cannot exist.
-- `Unknown/Other` is a combined upstream shape category; we cannot reconstruct its earlier categories.
-- A missing explanation reflects the removed source column, not an assessment that a sighting is inexplicable.
-- A unique report ID identifies a report; it does not establish a unique physical event.
-
-## Files we generate
-
-| File | Purpose |
-| --- | --- |
-| [`dist/data/reports.json`](../dist/data/reports.json) | Our partition index and expected total count |
-| `dist/data/reports/part-*.json.gz` | Our report records in batches of at most 10,000 |
-| [`dist/data/manifest.json`](../dist/data/manifest.json) | Our dimensions, source metadata, fingerprints, and interpretation rules |
-| [`dist/data/summaries.json`](../dist/data/summaries.json) | Our full-snapshot aggregates and quality measures |
-| [`docs/dataset-import-checks.json`](dataset-import-checks.json) | Our machine-readable import reconciliation |
-
-Our browser loads the partitions, checks their combined count against the index and manifest, and checks ID uniqueness. It then filters individual reports and recomputes chart denominators from that selection. The precomputed summaries describe the full snapshot, not every filtered view.
-
-We keep our [verification evidence](verification.md) and [data-update procedure](development.md#updating-our-data) alongside these rules.
+The site uses an exported snapshot. Our Fabric lineage remains reviewable from About.
