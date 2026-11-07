@@ -10,7 +10,7 @@ Our exploratory question is: **Where and when do people in the United States rep
 
 We use the app to:
 
-- Open directly on the interactive state map. Selecting a state leaves it green and filters our report explorer. Selecting it again restores all states.
+- Select a state on our map and compare report counts.
 - Explore occurrence years, months, local hours, and reported shapes with linked charts.
 - Compare state populations with report counts, switch the ranking and map to reports per 100,000 residents, and open the selected state’s reports.
 - Search summaries, read individual records, and follow their original NUFORC links.
@@ -36,8 +36,6 @@ We use `Final File Swear on god for now!.json`, the group’s corrected Fabric e
 Our usable occurrence dates span **6 July 1905 to 6 March 2026**. We preserve every supplied report ID and source link. We keep missing summaries missing, retain the source's `Unknown/Other` shape category, and distinguish an explicit `No` media label from missing information.
 
 We use `Date_Fixed` in month-day-year order and the supplied `TimeOnly` values. We ignore `Date`, `Time`, and `Date_Corrected`. Our adapter also supports the spelling `Only_Time`. Both supplied files contain one JSON object per line. We retain population as a separate state/year dimension and also add the matching `state_population` to each report. We explain our rules and source fingerprints in [our data preparation guide](docs/data-preparation.md).
-
-Our map is the first main panel in Explore and Population. On the Population map, state selection leaves only the chosen state green while the scatter and ranking retain the wider comparison. We place the fact carousel and summary cards below the map.
 
 We use the user-supplied UFO landing sound by Altered Sound Effects. The opening sound attempts to play when visitors enter with sound enabled. Browser autoplay rules may require their first click. The header offers play, stop, and replay controls, and a saved mute preference is respected. We record the creator and source in [our audio attribution](docs/audio-source.md).
 

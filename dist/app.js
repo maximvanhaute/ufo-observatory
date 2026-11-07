@@ -140,14 +140,6 @@ function render(){
   document.body.dataset.view=view;
   const headings={explore:['THE SIGHTING EXPLORER','Follow your curiosity.','What’s <span>out there?</span>','Explore the stories people report in our skies.'],patterns:['THE PATTERN LAB','Make the connections.','Strange skies.<span> Clear patterns.</span>','Explore when, where and how sightings are described.'],reports:['THE REPORT ROOM','Every report has a story.','Look closer.<span> Read the stories.</span>','Explore the original summaries behind the data.'],about:['BEHIND THE OBSERVATORY','Good questions. Careful data.','Stay curious.<span> Think critically.</span>','The sources, cleaning decisions and limits behind the visuals.']};
   const isPopulation=view==='patterns'&&patternsTab==='population';
-  document.body.classList.toggle('map-first',view==='explore'||isPopulation);
-  const factTarget=view==='explore'?$('explore-facts'):isPopulation?$('population-facts'):$('fact-home');
-  if($('fact-banner').parentElement!==factTarget)factTarget.append($('fact-banner'));
-  if(view==='explore') {
-    if($('metric-grid').parentElement!==$('explore-metrics'))$('explore-metrics').append($('metric-grid'));
-  } else if($('metric-grid').parentElement!==$('main-content')) {
-    $('selection-bar').after($('metric-grid'));
-  }
   if(isPopulation)headings.patterns=['THE POPULATION LAB','A different view of the same sky.','More people.<span> More sightings?</span>','Compare report counts with reports per 100,000 residents.'];
   $('metric-grid').hidden=isPopulation;
   $('pattern-time-panel').hidden=patternsTab!=='time';
@@ -201,7 +193,6 @@ function renderMetrics(){
 function renderCharts(){
   if(!stats)return;
   if(view==='explore'){
-    document.querySelector('#view-explore .map-legend').hidden=Boolean(filters.state);
     renderStateMap($('state-map'),geometry,stats,filters,code=>setFilter('state',filters.state===code?'':code),country=>setFilter('country',country));
     renderHourly($('explore-hourly'),stats,filters,toggleHour);
     renderShapeBars($('explore-shapes'),stats,filters,toggleShape,6,true);

@@ -40,7 +40,7 @@ reports per 100,000 residents =
 
 We include zero-report states when their population is available. We keep missing population distinct from zero and apply no interpolation, carry-forward, or population from a different year.
 
-The population file ends in 2024. Alaska has no recent population values in the supplied file. For 2024, we match 49 states plus DC and compare **3,370 reports**. We exclude 15 Alaska reports and one US Virgin Islands report from that population comparison. Territory reports and Alaska reports remain available in the report explorer. The map marks unavailable state populations with dashed borders and uses gray before a state is selected. Once a state is selected, only that state is green.
+The population file ends in 2024. Alaska has no recent population values in the supplied file. For 2024, we match 49 states plus DC and compare **3,370 reports**. We exclude 15 Alaska reports and one US Virgin Islands report from that population comparison. Territory reports and Alaska reports remain available in the report explorer. The map shows unavailable state populations in gray with dashed borders.
 
 Across the complete export, 135,472 reports have a population match, 4,400 time-eligible reports lack a state-year match, and 15 have flagged dates. These categories sum to 139,887.
 

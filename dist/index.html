@@ -12,7 +12,7 @@
   <script defer src="./vendor/d3.min.js"></script>
   <script type="module" src="./app.js"></script>
 </head>
-<body data-view="explore" class="map-first">
+<body>
   <a class="skip-link" href="#main-content">Skip to the observatory</a>
   <header class="site-header" id="site-header">
     <div class="header-inner">
@@ -47,7 +47,6 @@
   </section>
 
   <div class="shell">
-    <div id="fact-home">
     <section class="fact-banner" id="fact-banner" aria-label="UFO fun facts">
       <img src="./assets/mascot.png" width="110" height="80" alt="">
       <div class="fact-copy">
@@ -61,7 +60,6 @@
         <button id="fact-next" class="icon-button" type="button" aria-label="Next fun fact" data-sound="alien" disabled>›</button>
       </div>
     </section>
-    </div>
 
     <div id="loading" class="loading-panel" role="status"><div class="orbit-loader" aria-hidden="true"></div><h2>Opening the observatory…</h2><p>Bringing your Fabric data into view.</p></div>
     <div id="load-error" class="empty-state" hidden><h2>The data couldn’t be loaded.</h2><p id="error-message">Check your connection and try again.</p><button class="primary-button" onclick="location.reload()">Try again</button></div>
@@ -89,8 +87,6 @@
 
           <section class="view" id="view-explore" aria-label="Explore reports">
             <article class="panel map-panel"><div class="panel-heading"><div><h3><span data-icon="map"></span>Reports by state</h3><p>Pick a state. See the stories behind the count.</p></div><div class="map-legend"><span>Fewer</span><span class="legend-ramp"></span><span>More</span></div></div><div id="state-map" class="map-container"></div><div class="map-footer"><p id="map-coverage"></p><button class="text-button" id="view-state-reports">Browse these reports<span aria-hidden="true">→</span></button></div></article>
-            <div id="explore-metrics"></div>
-            <div id="explore-facts"></div>
             <div class="chart-pair"><article class="panel chart-card"><div class="panel-heading"><div><h3><span data-icon="clock"></span>When did sightings occur?</h3><p>Reported local hour · click a bar to filter</p></div></div><div id="explore-hourly" class="hourly-chart"></div><div class="chart-footnote" id="hourly-denominator"></div></article><article class="panel chart-card"><div class="panel-heading"><div><h3><span data-icon="shapes"></span>What shapes were reported?</h3><p>Click a shape to take a closer look</p></div></div><div id="explore-shapes" class="shape-bars"></div><button class="text-button chart-link" data-view="patterns">See all patterns<span aria-hidden="true">→</span></button></article></div>
           </section>
 
@@ -103,19 +99,12 @@
     <div><p class="eyebrow">MORE PEOPLE. MORE REPORTS?</p><p id="population-period"></p></div>
     <label class="population-year-label">Occurrence year<select id="population-year" aria-label="Population comparison year"></select></label>
   </div>
-  <article class="panel population-map-panel">
-    <div class="panel-heading"><div><h3>How does the picture change?</h3><p id="population-map-unit"></p></div>
-      <div class="map-legend"><span>Fewer</span><span class="legend-ramp"></span><span>More</span></div>
-    </div>
-    <div id="population-map" class="map-container"></div>
-  </article>
   <div class="metric-grid population-metrics">
     <div class="metric"><span>Reports compared</span><strong id="population-count">—</strong><small id="population-match-note"></small></div>
     <div class="metric"><span>State / DC population coverage</span><strong id="population-coverage">—</strong><small id="population-coverage-caption">Matched for this year</small></div>
     <div class="metric"><span>Most reports</span><strong class="population-leader" id="population-volume-leader">—</strong><small id="population-volume-value"></small></div>
     <div class="metric"><span>Highest per capita</span><strong class="population-leader" id="population-rate-leader">—</strong><small id="population-rate-value"></small></div>
   </div>
-  <div id="population-facts"></div>
   <div class="population-selected" id="population-selected" hidden>
     <div><h3 id="population-selected-title" tabindex="-1"></h3><p id="population-selected-values"></p></div>
     <button type="button" class="secondary-button" id="population-read-reports">Read this state’s reports <span aria-hidden="true">→</span></button>
@@ -137,7 +126,12 @@
       <p id="population-insight" class="population-insight" aria-live="polite"></p>
     </article>
   </div>
-
+  <article class="panel population-map-panel">
+    <div class="panel-heading"><div><h3>How does the picture change?</h3><p id="population-map-unit"></p></div>
+      <div class="map-legend"><span>Fewer</span><span class="legend-ramp"></span><span>More</span></div>
+    </div>
+    <div id="population-map" class="map-container"></div>
+  </article>
   <p id="population-coverage-note" class="population-coverage-note"></p>
   <details class="population-method">
     <summary>How we calculate the comparison</summary>

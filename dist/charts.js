@@ -18,18 +18,14 @@ export function renderStateMap(element, geometry, stats, filters, onState, onCou
   for (const feature of geometry.features) {
     const count = stats.states.get(feature.id) || 0;
     const value = values.get(feature.id) || 0;
-    const selected = filters.state === feature.id;
     const missing = Boolean(options.values) && !values.has(feature.id);
-    const fill = filters.state ? (selected ? '#b9f56c' : '#102a3b') :
-      missing ? '#34424e' : value ? color(Math.sqrt(value/max)) : '#102a3b';
     const tooltip = options.tooltip ? options.tooltip(feature.id) : `${feature.properties.state_name}\n${number(count)} ${count===1?'report':'reports'} in this selection\nClick to ${filters.state===feature.id?'clear':'explore'}`;
-    const shape = node('path', {d:path(feature) || '',class:`state-path${missing ? ' population-missing' : ''}${selected ? ' is-selected' : ''}`,fill,'data-state':feature.id,'aria-pressed':String(selected)});
+    const shape = node('path', {d:path(feature) || '',class:`state-path${missing ? ' population-missing' : ''}${filters.state === feature.id ? ' is-selected' : ''}`,fill:missing ? '#34424e' : value ? color(Math.sqrt(value/max)) : '#102a3b','data-state':feature.id,'aria-pressed':String(filters.state===feature.id)});
     bindMark(shape,{label:tooltip.replaceAll('\n','. ') + '. Select state.',tooltip,action:()=>onState(feature.id)});
     group.append(shape);
     const center = path.centroid(feature);
     if (path.area(feature) > 700 && center.every(Number.isFinite)) {
-      const lightFill = filters.state ? selected : value > max*.3 && !missing;
-      group.append(node('text',{x:center[0],y:center[1],fill: lightFill ? '#122a2d' : '#a2bdcb','font-size':'11','font-weight':'600','text-anchor':'middle','dominant-baseline':'middle','pointer-events':'none'},feature.id));
+      group.append(node('text',{x:center[0],y:center[1],fill: value > max*.3 ? '#122a2d' : '#a2bdcb','font-size':'11','font-weight':'600','text-anchor':'middle','dominant-baseline':'middle','pointer-events':'none'},feature.id));
     }
   }
   svg.append(group); element.append(svg);
