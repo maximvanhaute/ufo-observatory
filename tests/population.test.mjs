@@ -78,3 +78,59 @@ test('report population columns match the dimension without changing the report 
     assert.equal(report.state_population, expected);
   }
 });
+
+test('all-years rate weights annual populations and includes zero-report years', () => {
+  const states = [{state_code:'WA',state_name:'Washington'}, {state_code:'HI',state_name:'Hawaii'}];
+  const samplePopulation = {metadata:{max_year:2002},records:[
+    {state_code:'WA',year:2000,population:1000}, {state_code:'WA',year:2001,population:2000},
+    {state_code:'WA',year:2002,population:3000}, {state_code:'HI',year:2001,population:100},
+    {state_code:'HI',year:2002,population:200},
+  ]};
+  const sampleReports = [];
+  for (const [state, year, count] of [['WA',2000,2], ['WA',2002,4], ['HI',2000,1], ['HI',2002,3]]) {
+    for (let index=0;index<count;index++) sampleReports.push({
+      state_code:state,country_key:'US',year,eligible_for_time_analysis:true,
+    });
+  }
+  const result = comparePopulation(sampleReports, samplePopulation, states, DEFAULT_FILTERS, 'all');
+  const wa = result.rows.find(row=>row.code==='WA');
+  assert.equal(result.yearCount,3);
+  assert.equal(wa.count,6);
+  assert.equal(wa.annualCount,2);
+  assert.equal(wa.population,2000);
+  assert.equal(wa.personYears,6000);
+  assert.equal(wa.rate,100);
+  const hi = result.rows.find(row=>row.code==='HI');
+  assert.equal(hi.count,3);
+  assert.equal(hi.totalReports,4);
+  assert.equal(hi.coveredYears,2);
+  assert.equal(hi.annualCount,1.5);
+  assert.equal(hi.rate,1000);
+  assert.equal(result.excludedReports,1);
+});
+
+test('all-years comparison retains partial coverage and excludes unsupported recent years', () => {
+  const result = compare({}, 'all');
+  assert.equal(result.startYear,1905);
+  assert.equal(result.endYear,2024);
+  assert.equal(result.yearCount,120);
+  assert.equal(result.matchedReports,135472);
+  assert.equal(result.outsidePeriodReports,3527);
+  assert.equal(result.rows.length,50);
+  assert.equal(result.partialStates[0].code,'HI');
+  assert.equal(result.partialStates[0].coveredYears,75);
+  assert.equal(result.missingStates[0].code,'AK');
+  const wa = result.rows.find(row=>row.code==='WA');
+  assert.equal(wa.count,7408);
+  assert.equal(wa.rate.toFixed(2),'1.71');
+  assert.equal(result.byCount[0].code,'CA');
+  assert.equal(result.byCount[0].annualCount.toFixed(1),'138.8');
+});
+
+test('all-years CSV describes annual means and the actual population coverage', () => {
+  const csv = populationToCsv(compare({}, 'all'));
+  assert.ok(csv.includes('average_annual_reports,summed_annual_populations,average_population,annual_reports_per_100000'));
+  assert.ok(csv.includes('"HI","Hawaii","1905","2024","75","1950","2024"'));
+  assert.ok(csv.includes('"partial_year_coverage"'));
+  assert.equal(csv.split('\r\n').length,52);
+});

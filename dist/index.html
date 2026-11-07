@@ -97,12 +97,12 @@
 <div id="pattern-time-panel"><div class="patterns-top"><article class="panel heatmap-panel"><div class="panel-heading"><div><h3><span data-icon="grid"></span>When did reported sightings occur?</h3><p>Month × local hour · click a cell to explore</p></div></div><div id="month-hour-heatmap" class="heatmap-chart"></div><p id="heatmap-denominator" class="chart-footnote"></p></article><article class="panel"><div class="panel-heading"><div><h3><span data-icon="shapes"></span>Shapes in the stories</h3><p>Reported descriptions, in their own categories</p></div></div><div id="patterns-shapes" class="shape-bars shape-bars-tall"></div></article></div><div class="patterns-bottom"><article class="panel timeline-panel"><div class="panel-heading"><div><h3><span data-icon="trend"></span>Reports through the years</h3><p>Occurrence year in this sample · click a year to filter</p></div></div><div id="timeline" class="timeline-chart"></div><p class="chart-footnote">Gaps mean no reports in this sample. The uploader’s selection is not the complete NUFORC archive.</p></article><article class="panel"><div class="panel-heading"><div><h3><span data-icon="globe"></span>Places in the sample</h3><p>Country and reported-area counts</p></div></div><div id="country-bars" class="shape-bars"></div></article></div></div><div id="pattern-population-panel" hidden>
   <div class="population-toolbar">
     <div><p class="eyebrow">MORE PEOPLE. MORE REPORTS?</p><p id="population-period"></p></div>
-    <label class="population-year-label">Occurrence year<select id="population-year" aria-label="Population comparison year"></select></label>
+    <label class="population-year-label">Period<select id="population-year" aria-label="Population comparison period"></select></label>
   </div>
   <div class="metric-grid population-metrics">
     <div class="metric"><span>Reports compared</span><strong id="population-count">—</strong><small id="population-match-note"></small></div>
     <div class="metric"><span>State / DC population coverage</span><strong id="population-coverage">—</strong><small id="population-coverage-caption">Matched for this year</small></div>
-    <div class="metric"><span>Most reports</span><strong class="population-leader" id="population-volume-leader">—</strong><small id="population-volume-value"></small></div>
+    <div class="metric"><span id="population-volume-label">Most reports</span><strong class="population-leader" id="population-volume-leader">—</strong><small id="population-volume-value"></small></div>
     <div class="metric"><span>Highest per capita</span><strong class="population-leader" id="population-rate-leader">—</strong><small id="population-rate-value"></small></div>
   </div>
   <div class="population-selected" id="population-selected" hidden>
@@ -135,8 +135,8 @@
   <p id="population-coverage-note" class="population-coverage-note"></p>
   <details class="population-method">
     <summary>How we calculate the comparison</summary>
-    <p>Reports per 100,000 residents = filtered reports in the selected occurrence year ÷ that state’s population in the same year × 100,000. Population is used once per state and year. A state with population data and no matching reports has a rate of zero.</p>
-    <p>Shape, month, local hour, media and search filters change the report count. The denominator remains the full population for that year. These filtered rates describe self-reported accounts. Population alone cannot establish what caused a sighting or a report.</p>
+    <p>For one year, reports per 100,000 residents = filtered reports ÷ that state’s population in the same year × 100,000. For All years, the average annual rate = total filtered reports in covered state-years ÷ the sum of those annual populations × 100,000. We include covered years with zero reports.</p><p>In All years, the count ranking and scatter show average annual reports, and the population axis shows average population across the same covered years. Tooltips and CSV show each state’s covered years. Hawaii has shorter historical coverage. Years after 2024 and state-years with missing population are excluded from the average.</p>
+    <p>Shape, month, local hour, media and search filters change the report count. The denominator remains the full population for the covered year or years. These filtered rates describe self-reported accounts. Population alone cannot establish what caused a sighting or a report.</p>
     <p>Population source is the group-supplied State_Population.json, covering years through 2024. Its original publisher and estimation method have yet to be supplied. Washington, DC is mapped by its full name. We keep missing populations unavailable, with no interpolation or use of another year.</p>
     <p>The state comparison and its CSV cover the 50 states and Washington, DC. Territory reports remain in the report explorer. The CSV includes unmatched states with an empty population and rate, and a coverage status.</p>
   </details>

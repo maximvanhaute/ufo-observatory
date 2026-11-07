@@ -1,5 +1,15 @@
 # Verification record
 
+## All-years population average — 7 November 2026
+
+We added All years alongside the existing single-year selector. The current shared window is 1905–2024. We include state-years with population data, including years with no reports. Each state’s annual rate is its included reports divided by summed annual populations, multiplied by 100,000. Its scatter coordinates are mean population and mean annual report count across those same covered years.
+
+We compare 135,472 reports. Alaska has no matching population years. Hawaii has 75 years (1950–2024), and its shorter coverage is displayed in tooltips, state details, and CSV. We distinguish 873 unmatched reports within the period from the 3,527 eligible reports after 2024. Fifteen flagged dates remain excluded from time analysis.
+
+Our suite now contains 22 JavaScript checks and two Python importer checks. A three-year fixture with a zero-report middle year verifies the weighted rate, average population, and annual mean. Another fixture verifies exclusion of a report without a matching state-year population. The full-data check verifies Washington’s 1.71 annual reports per 100,000 and California’s 138.8 average annual reports. CSV checks cover period boundaries, denominators, and shorter coverage.
+
+We checked the local browser through the existing controls. The all-years selector displays 135,472 matched reports. The count/rate switch changes the leader from California to Washington. Choosing 2024 restores 3,370 reports and California’s 334-report count. Reload preserves the All years selection and measure. The selected-state report drill-down and CSV action work. On a 375px phone viewport the selector fits without horizontal overflow. We observed no browser warnings or errors in those inspected flows.
+
 ## Opening sound — 7 November 2026
 
 We downloaded the user-supplied UFO landing clip’s AAC audio stream and verified the creator’s Creative Commons Attribution label in YouTube metadata. Our browser decoded the file and reported a duration of 14.33 seconds, readyState 4, active playback, and increasing currentTime. We verified that the sound toggle pauses and resets the clip, and that a muted preference survives reload. Play and replay remain available from the header.

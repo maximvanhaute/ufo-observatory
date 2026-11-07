@@ -179,3 +179,12 @@
 }
 .audio-credit { font-size: 11px; color: var(--muted); line-height: 1.8; margin-top: 16px; }
 .audio-credit a { color: var(--lime); text-decoration: underline; text-underline-offset: 3px; }
+
+.population-toolbar > div { min-width: 0; }
+.population-year-label { min-width: 0; flex: 0 1 260px; }
+.population-year-label select { min-width: 0; width: 100%; }
+@media (max-width: 640px) {
+  .population-toolbar { flex-wrap: wrap; }
+  .population-year-label { flex: 1 1 100%; flex-direction: row; align-items: center; font-size: 11px; }
+  .population-year-label select { flex: 1; }
+}

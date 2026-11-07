@@ -46,7 +46,15 @@ Across the complete export, 135,472 reports have a population match, 4,400 time-
 
 ## Our interactive comparison
 
-We use a single occurrence year to keep denominators comparable. We preserve the shape, month, local hour, media, and text-search filters. They affect the report count, while the denominator remains the full population for that year. We describe rates as filtered reports per resident, with no annualisation of selected months or hours.
+We support a single occurrence year and an All years annual average. We preserve the shape, month, local hour, media, and text-search filters. They affect the report count, while the denominator remains the full population for that year. We describe rates as filtered reports per resident, with no annualisation of selected months or hours.
+
+For All years, we use the overlap between eligible report dates and the population file, currently **1905–2024**. For each state we include reports only in years with that state’s population. We include population years with zero reports. We calculate the average annual rate as total included reports divided by summed annual populations, multiplied by 100,000. This weights the annual rates by population.
+
+We show average annual reports as included reports divided by covered years. The population axis shows the arithmetic mean population over the same covered years. Hawaii has 75 years of coverage (1950–2024), most areas have 120 years, and Alaska remains unavailable. Different coverage windows are visible in tooltips, selected-state details, and the exported table.
+
+The All years comparison includes **135,472 reports** with population matches. Within 1905–2024, 873 reports lack a state-year match. A further 3,527 eligible reports from 2025–2026 fall outside the population period. We keep the 15 flagged dates outside time analysis. These categories reconcile to the complete 139,887-report export.
+
+State report drill-down shows all reports matching the selected state and date period. The selected-state card distinguishes the state’s report total from the number included in population calculations.
 
 We compare all states and highlight the selected state. This keeps the scatter plot and ranking useful while users read the selected state’s reports. The count/rate switch affects both the ranking and the map. The scatter always uses population and report count, with a reference line based on the weighted rate across matched areas. The line is a proportional comparison rather than a regression.
 

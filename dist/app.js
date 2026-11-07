@@ -4,7 +4,7 @@ import {renderStateMap, renderHourly, renderShapeBars, renderHeatmap, renderTime
 import {reportCard, reportDetail, aboutContent} from './content.js';
 import {loadReportPartitions} from './data-loader.js';
 import {initSoundControls} from './sound.js';
-import {comparePopulation, populationToCsv, validatePopulation} from './population-engine.js';
+import {comparePopulation, populationPeriod, populationToCsv, validatePopulation} from './population-engine.js';
 import {renderPopulation} from './population-view.js';
 
 const $ = id => document.getElementById(id);
@@ -19,7 +19,7 @@ function populateSelect(element,items,allLabel){element.innerHTML=`<option value
 
 function initControls(){
   const globalStats=aggregateReports(allReports);
-  populateSelect($('population-year'), [...manifest.years].reverse().map(year=>({value:year,label:year})), 'Choose a year');
+  populateSelect($('population-year'), [{value:'all',label:'All years · annual average'}, ...[...manifest.years].reverse().map(year=>({value:year,label:year}))], 'Choose a period');
   $('population-year').options[0].disabled=true;
   for (const button of document.querySelectorAll('[data-pattern-tab]')) {
     button.addEventListener('click', () => {
@@ -28,7 +28,7 @@ function initControls(){
       else {writeUrl(true);render();}
     });
   }
-  $('population-year').addEventListener('change', event=>selectPopulationYear(Number(event.target.value)));
+  $('population-year').addEventListener('change', event=>selectPopulationYear(event.target.value==='all'?'all':Number(event.target.value)));
   for (const button of document.querySelectorAll('[data-population-mode]')) {
     button.addEventListener('click', () => {populationMode=button.dataset.populationMode;writeUrl();renderCharts();});
   }
@@ -94,9 +94,9 @@ function readUrl(){
   patternsTab=params.get('pattern')==='population'?'population':'time';
   populationMode=params.get('population_mode')==='count'?'count':'rate';
   const requestedYear=Number(params.get('population_year'));
-  populationYear=manifest.years.includes(requestedYear)?requestedYear:population.metadata.max_year;
+  populationYear=params.get('population_year')==='all'?'all':manifest.years.includes(requestedYear)?requestedYear:population.metadata.max_year;
   if(view==='patterns'&&patternsTab==='population') {
-    filters.from=filters.to=String(populationYear);
+    applyPopulationPeriod();
   }
 }
 
@@ -123,12 +123,17 @@ function toggleShape(key){setFilter('shape',filters.shape===key?'':key);}
 function toggleHour(hour){setFilter('hour',filters.hour!==''&&Number(filters.hour)===hour?'':String(hour));}
 function toggleCell(month,hour){const same=Number(filters.month)===month&&filters.hour!==''&&Number(filters.hour)===hour;filters.month=same?'':String(month);filters.hour=same?'':String(hour);page=1;writeUrl();render();}
 function toggleYear(year){const same=Number(filters.from)===year&&Number(filters.to)===year;filters.from=same?'':String(year);filters.to=same?'':String(year);page=1;writeUrl();render();}
-function resetFilters(){filters={...DEFAULT_FILTERS,country:''};if(view==='patterns'&&patternsTab==='population')filters.from=filters.to=String(populationYear);page=1;writeUrl();render();}
-function navigate(next){if(!VIEWS.includes(next))return;closeFilters();view=next;if(view==='patterns'&&patternsTab==='population')filters.from=filters.to=String(populationYear);page=1;writeUrl(true);render();window.scrollTo({top:0,behavior:'instant'});document.title=`UFO Observatory — ${next==='about'?'About the data':next[0].toUpperCase()+next.slice(1)}`;}
+function resetFilters(){filters={...DEFAULT_FILTERS,country:''};if(view==='patterns'&&patternsTab==='population')applyPopulationPeriod();page=1;writeUrl();render();}
+function navigate(next){if(!VIEWS.includes(next))return;closeFilters();view=next;if(view==='patterns'&&patternsTab==='population')applyPopulationPeriod();page=1;writeUrl(true);render();window.scrollTo({top:0,behavior:'instant'});document.title=`UFO Observatory — ${next==='about'?'About the data':next[0].toUpperCase()+next.slice(1)}`;}
+
+function applyPopulationPeriod(){
+  const period=populationPeriod(allReports,population,populationYear);
+  filters.from=String(period.startYear);filters.to=String(period.endYear);
+}
 
 function selectPopulationYear(year){
-  if(!manifest.years.includes(year))return;
-  populationYear=year;filters.from=filters.to=String(year);page=1;writeUrl(true);render();
+  if(year!=='all'&&!manifest.years.includes(year))return;
+  populationYear=year;applyPopulationPeriod();page=1;writeUrl(true);render();
 }
 function selectPopulationState(code){
   setFilter('state',filters.state===code?'':code);
