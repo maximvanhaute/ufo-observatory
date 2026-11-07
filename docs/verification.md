@@ -1,5 +1,15 @@
 # Verification record
 
+## Map entry and opening sound — 7 November 2026
+
+We moved the state map ahead of the summary cards and fun-fact carousel in Explore and ahead of the metrics, scatter, and ranking in Population. We retain the state filter and the wider population comparison. In both maps, selecting a state leaves only that state green, and selecting it again restores the overview.
+
+We tested Wyoming in Explore, including keyboard activation, and Montana in Population. Wyoming alone was green, its all-years selection contained 439 reports, and clearing it restored the overview. Montana alone was green in Population while the comparison retained 3,370 matched reports.
+
+We downloaded the user-supplied clip’s AAC audio stream and verified the creator’s Creative Commons Attribution label in YouTube metadata. Our browser decoded the file and reported a duration of 14.33 seconds, readyState 4, active playback, and increasing currentTime. We verified that the sound toggle pauses and resets the clip, and that a muted preference survives reload. Play and replay remain available from the header.
+
+At a phone-sized viewport the map was fully visible in the initial screen, with no horizontal overflow. The desktop map was also above the metric cards and fact carousel. We observed no browser errors in these local checks. The existing 21 automated checks also passed.
+
 ## Corrected export and population comparison — 7 November 2026
 
 We checked the current corrected source against the complete prepared output by original NUFORC ID. All 139,887 IDs, corrected occurrence dates and times, links, cities, summaries, and media values reconcile with the supplied file. The raw fingerprints are recorded in dataset-import-checks.json and the manifest.

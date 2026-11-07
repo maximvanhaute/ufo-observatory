@@ -167,3 +167,39 @@
   .population-method { font-size: 11px; padding: 14px; }
   .population-coverage-note { font-size: 10px; }
 }
+
+/* Put the state map at the start of the two map-led views. */
+.map-first .hero,
+.map-first #fact-home { display: none; }
+.map-first .page-toolbar { margin-top: 18px; }
+#view-explore > .map-panel .map-container,
+.map-first .population-map-panel .map-container {
+  height: clamp(250px, 49vh, 440px);
+  min-height: 0;
+  aspect-ratio: auto;
+}
+#explore-metrics { margin-top: 18px; }
+#explore-facts .fact-banner,
+#population-facts .fact-banner { margin: 0 0 18px; }
+.map-first .population-map-panel { margin: 0 0 18px; }
+.map-first .population-metrics { margin-top: 18px; }
+@media (max-width: 640px) {
+  .map-first .page-toolbar { margin-top: 15px; }
+  .map-first .page-toolbar h2 { font-size: 20px; }
+  #view-explore > .map-panel .map-container,
+  .map-first .population-map-panel .map-container {
+    height: clamp(230px, 35vh, 310px);
+  }
+}
+
+.opening-stop,
+.opening-sound[aria-pressed="true"] .opening-play { display: none; }
+.opening-sound[aria-pressed="true"] .opening-stop { display: inline; }
+@media (max-width: 1100px) {
+  .opening-sound span { display: none; }
+}
+@media (max-width: 640px) {
+  .header-actions .snapshot-badge { display: none; }
+}
+.audio-credit { font-size: 11px; color: var(--muted); line-height: 1.8; margin-top: 16px; }
+.audio-credit a { color: var(--lime); text-decoration: underline; text-underline-offset: 3px; }

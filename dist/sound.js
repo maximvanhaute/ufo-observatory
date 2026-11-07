@@ -21,11 +21,47 @@ const CUES = {
   ],
 };
 
-let enabled = false;
+let enabled = true;
 let context;
 let output;
 let request = 0;
 let lastStart = -Infinity;
+let openingAudio, openingControl;
+let openingPending = false, openingPlayed = false, openingAttempt = 0;
+
+function updateOpeningControl() {
+  const playing = !openingAudio.paused && !openingAudio.ended;
+  const label = playing ? 'Stop opening sound' : openingPlayed ? 'Replay opening sound' : 'Play opening sound';
+  openingControl.setAttribute('aria-label', label);
+  openingControl.setAttribute('aria-pressed', String(playing));
+  openingControl.title = label;
+  openingControl.querySelector('span').textContent = playing ? 'Stop intro' : openingPlayed ? 'Replay intro' : 'Play intro';
+}
+
+function stopOpeningSound() {
+  openingAttempt++;
+  openingPending = false;
+  openingAudio.pause();
+  openingAudio.currentTime = 0;
+  updateOpeningControl();
+}
+
+async function playOpeningSound() {
+  if (!enabled || openingControl.disabled) return;
+  const attempt = ++openingAttempt;
+  openingPending = false;
+  try {
+    openingAudio.currentTime = 0;
+    await openingAudio.play();
+    if (attempt !== openingAttempt) return;
+    openingPlayed = true;
+    updateOpeningControl();
+  } catch (error) {
+    if (attempt !== openingAttempt) return;
+    openingPending = enabled && error.name === 'NotAllowedError';
+    updateOpeningControl();
+  }
+}
 
 function playNote(note, start) {
   const onset = start + note.delay;
@@ -48,7 +84,7 @@ function playNote(note, start) {
 }
 
 export async function playSound(cue) {
-  if (!enabled) return;
+  if (!enabled || (openingAudio && !openingAudio.paused)) return;
   const current = ++request;
   try {
     if (!context) {
@@ -71,8 +107,28 @@ export async function playSound(cue) {
 
 export function initSoundControls(button) {
   if (!AudioEngine) return;
+  openingAudio = document.getElementById('opening-audio');
+  openingControl = document.getElementById('opening-sound');
+  openingAudio.volume = 0.3;
+  openingControl.hidden = false;
+  for (const event of ['playing', 'pause', 'ended']) openingAudio.addEventListener(event, updateOpeningControl);
+  openingAudio.addEventListener('error', () => {
+    openingPending = false;
+    openingControl.disabled = true;
+    openingControl.title = 'The opening sound could not be loaded';
+    openingControl.setAttribute('aria-label', 'Opening sound unavailable');
+    openingControl.querySelector('span').textContent = 'Intro unavailable';
+  });
+  openingControl.addEventListener('click', () => {
+    if (!openingAudio.paused) {stopOpeningSound();return;}
+    enabled = true;
+    button.setAttribute('aria-pressed', 'true');
+    try {localStorage.setItem(PREFERENCE_KEY, 'on');} catch {}
+    if (output) output.gain.setTargetAtTime(VOLUME, context.currentTime, 0.006);
+    void playOpeningSound();
+  });
   try {
-    enabled = localStorage.getItem(PREFERENCE_KEY) === 'on';
+    enabled = localStorage.getItem(PREFERENCE_KEY) !== 'off';
   } catch {
     // The toggle still works for this page if storage is blocked.
   }
@@ -90,9 +146,11 @@ export function initSoundControls(button) {
     if (output) output.gain.setTargetAtTime(enabled ? VOLUME : 0, context.currentTime, 0.006);
     if (enabled) {
       lastStart = -Infinity;
-      void playSound('alien');
+      if (!openingPlayed) void playOpeningSound();
+      else void playSound('alien');
     } else {
       request++;
+      stopOpeningSound();
     }
   });
 
@@ -100,7 +158,14 @@ export function initSoundControls(button) {
   document.addEventListener('click', event => {
     if (!enabled) return;
     const control = event.target.closest('button, a[data-view], summary');
-    if (!control || control === button || control.matches(':disabled, [aria-disabled="true"]')) return;
+    if (control === button || control === openingControl) return;
+    if (openingPending && !openingPlayed) void playOpeningSound();
+    if (!control || control.matches(':disabled, [aria-disabled="true"]')) return;
     void playSound(control.dataset.sound || (control.hasAttribute('data-report') ? 'report' : 'click'));
   }, {capture: true});
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && !openingAudio.paused) stopOpeningSound();
+  });
+  updateOpeningControl();
+  if (enabled) void playOpeningSound();
 }

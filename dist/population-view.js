@@ -117,13 +117,15 @@ export function renderPopulation(comparison, geometry, selectedState, mode, onSe
       label: mode === 'count' ? 'Map of report counts by state' : 'Map of reports per 100,000 residents',
       tooltip: code => rowMap.has(code) ? describe(rowMap.get(code)) : 'Population unavailable for this state in ' + comparison.year,
     });
-  $('population-map-unit').textContent = mode === 'count' ? 'Shading shows report counts' : 'Shading shows reports per 100,000 residents';
+  document.querySelector('.population-map-panel .map-legend').hidden=Boolean(selectedState);
+  $('population-map-unit').textContent = selectedState ? 'Selected state in green. Select it again to show all states.' :
+    mode === 'count' ? 'Shading shows report counts' : 'Shading shows reports per 100,000 residents';
   const missing = comparison.missingStates.map(row => row.name).join(', ');
   const coverage = comparison.rows.length ? (missing ? 'Population unavailable for ' + missing + ' in ' + comparison.year + '. ' : '') :
     'Population is unavailable for ' + comparison.year + '. The supplied population file ends in 2024. ';
   $('population-coverage-note').textContent = coverage +
-    number(comparison.excludedReports) + ' reports excluded from this comparison. Gray states have no population match. ' +
-    'All states are compared; a selected state is highlighted. Shape, month, hour, media and search filters affect report counts.';
+    number(comparison.excludedReports) + ' reports excluded from this comparison. Dashed borders mark missing populations. ' +
+    'Selecting a state leaves only that state green on the map. The scatter and ranking keep all states for comparison. Shape, month, hour, media and search filters affect report counts.';
   $('population-insight').textContent = comparison.matchedReports ?
     comparison.byCount[0].name + ' leads on volume. ' + comparison.byRate[0].name + ' leads per resident in this selection.' :
     'No reports match this selection. Try another year or clear your filters.';
