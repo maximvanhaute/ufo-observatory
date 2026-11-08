@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {gunzipSync} from 'node:zlib';
-import {DEFAULT_FILTERS} from '../dist/data-engine.js';
-import {comparePopulation, validatePopulation, populationToCsv} from '../dist/population-engine.js';
+import {DEFAULT_FILTERS,recordedDate} from '../dist/data-engine.js';
+import {comparePopulation, validatePopulation, populationToCsv, populationYearFromParam, populationReportFilters} from '../dist/population-engine.js';
 import {loadReportPartitions} from '../dist/data-loader.js';
 
 const read = name => JSON.parse(readFileSync(new URL('../dist/data/' + name, import.meta.url), 'utf8'));
@@ -74,12 +74,12 @@ test('report population columns match the dimension without changing the report 
   const lookup = new Map(population.records.map(row => [row.state_code + ':' + row.year, row.population]));
   assert.equal(new Set(reports.map(row => row.report_id)).size, 139887);
   for (const report of reports) {
-    const expected = report.eligible_for_time_analysis ? lookup.get(report.state_code + ':' + report.year) ?? null : null;
+    const expected = lookup.get(report.state_code + ':' + recordedDate(report).year) ?? null;
     assert.equal(report.state_population, expected);
   }
 });
 
-test('all-years rate weights annual populations and includes zero-report years', () => {
+test('all-years rate averages annual rates equally over active matched years, as in SQL', () => {
   const states = [{state_code:'WA',state_name:'Washington'}, {state_code:'HI',state_name:'Hawaii'}];
   const samplePopulation = {metadata:{max_year:2002},records:[
     {state_code:'WA',year:2000,population:1000}, {state_code:'WA',year:2001,population:2000},
@@ -96,41 +96,82 @@ test('all-years rate weights annual populations and includes zero-report years',
   const wa = result.rows.find(row=>row.code==='WA');
   assert.equal(result.yearCount,3);
   assert.equal(wa.count,6);
-  assert.equal(wa.annualCount,2);
+  assert.equal(wa.annualCount,3);
   assert.equal(wa.population,2000);
-  assert.equal(wa.personYears,6000);
-  assert.equal(wa.rate,100);
+  assert.equal(wa.personYears,4000);
+  assert.equal(wa.activeYears,2);
+  assert.equal(wa.coveredYears,3);
+  assert.equal(wa.rate,(200+400/3)/2);
   const hi = result.rows.find(row=>row.code==='HI');
   assert.equal(hi.count,3);
   assert.equal(hi.totalReports,4);
   assert.equal(hi.coveredYears,2);
-  assert.equal(hi.annualCount,1.5);
-  assert.equal(hi.rate,1000);
+  assert.equal(hi.activeYears,1);
+  assert.equal(hi.annualCount,3);
+  assert.equal(hi.rate,1500);
   assert.equal(result.excludedReports,1);
 });
 
-test('all-years comparison retains partial coverage and excludes unsupported recent years', () => {
+test('all-years comparison retains every report in the denominator coverage reconciliation', () => {
   const result = compare({}, 'all');
-  assert.equal(result.startYear,1905);
+  assert.equal(result.startYear,1790);
   assert.equal(result.endYear,2024);
-  assert.equal(result.yearCount,120);
-  assert.equal(result.matchedReports,135472);
+  assert.equal(result.yearCount,235);
+  assert.equal(result.totalReports,139887);
+  assert.equal(result.matchedReports,135475);
+  assert.equal(result.excludedReports,4412);
   assert.equal(result.outsidePeriodReports,3527);
   assert.equal(result.rows.length,50);
-  assert.equal(result.partialStates[0].code,'HI');
-  assert.equal(result.partialStates[0].coveredYears,75);
-  assert.equal(result.missingStates[0].code,'AK');
+  assert.equal(result.partialStates.find(row=>row.code==='HI').coveredYears,75);
+  assert.equal(result.inactiveStates[0].code,'AK');
   const wa = result.rows.find(row=>row.code==='WA');
-  assert.equal(wa.count,7408);
-  assert.equal(wa.rate.toFixed(2),'1.71');
+  assert.equal(wa.count,7409);
+  assert.equal(wa.activeYears,79);
+  assert.equal(wa.rate.toFixed(2),'1.48');
   assert.equal(result.byCount[0].code,'CA');
-  assert.equal(result.byCount[0].annualCount.toFixed(1),'138.8');
+  assert.equal(result.byCount[0].annualCount.toFixed(1),'191.4');
+  assert.equal(result.byRate[0].code,'VT');
+  assert.equal(result.byRate[0].rate.toFixed(2),'1.94');
 });
 
 test('all-years CSV describes annual means and the actual population coverage', () => {
   const csv = populationToCsv(compare({}, 'all'));
-  assert.ok(csv.includes('average_annual_reports,summed_annual_populations,average_population,annual_reports_per_100000'));
-  assert.ok(csv.includes('"HI","Hawaii","1905","2024","75","1950","2024"'));
+  assert.ok(csv.includes('active_years_count,active_start_year,active_end_year'));
+  assert.ok(csv.includes('average_reports_per_active_year,average_population_active_years,average_annual_sightings_per_100k'));
+  assert.ok(csv.includes('"HI","Hawaii","1790","2024","75"'));
   assert.ok(csv.includes('"partial_year_coverage"'));
   assert.equal(csv.split('\r\n').length,52);
+});
+
+test('every state average matches an independent raw-export reproduction of the group SQL',()=>{
+  const expected=JSON.parse(readFileSync(new URL('../docs/feedback-reconciliation.json',import.meta.url),'utf8'));
+  const comparison=compare({},'all');
+  assert.equal(comparison.rows.length,expected.app_normalized_dc_join.states.length);
+  for(const row of expected.app_normalized_dc_join.states){
+    const actual=comparison.rows.find(r=>r.code===row.state_code);
+    assert.equal(actual.count,row.reports);
+    assert.equal(actual.activeYears,row.active_years);
+    assert.ok(Math.abs(actual.rate-row.average_annual_sightings_per_100k)<1e-10,row.state_code+' rate');
+    assert.ok(Math.abs(actual.annualCount-row.average_reports_per_active_year)<1e-10,row.state_code+' count');
+    assert.ok(Math.abs(actual.population-row.average_population_active_years)<1e-7,row.state_code+' population');
+  }
+  assert.equal(comparison.matchedReports-expected.original_sql_join.matched_reports,157,'DC normalization explains the SQL join difference');
+});
+
+test('zero active years are unavailable, rather than a fabricated zero average',()=>{
+  const comparison=compare({query:'no-record-matches-this-exact-text-zzq'},'all');
+  assert.equal(comparison.rows.length,0);
+  assert.equal(comparison.inactiveStates.length,51);
+  assert.ok(comparison.allStates.every(row=>row.rate===null));
+  assert.ok(populationToCsv(comparison).includes('"no_active_years"'));
+});
+
+test('population defaults to all years and its period does not mutate other page filters',()=>{
+  for(const value of [null,'','all','invalid','1890'])assert.equal(populationYearFromParam(value,manifest.years),'all');
+  assert.equal(populationYearFromParam('2024',manifest.years),2024);
+  const filters={...DEFAULT_FILTERS,from:'2023',to:'2024',state:'MT'};
+  assert.deepEqual(populationReportFilters(filters,'all'),{...filters,from:'',to:''});
+  assert.deepEqual(populationReportFilters(filters,2024),{...filters,from:'2024',to:'2024'});
+  assert.equal(filters.from,'2023');
+  assert.equal(compare(filters,'all').matchedReports,135475,'hidden general year filters do not narrow the population comparison');
 });

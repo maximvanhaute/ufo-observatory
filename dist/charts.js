@@ -44,7 +44,7 @@ export function renderStateMap(element, geometry, stats, filters, onState, onCou
 }
 
 export function renderHourly(element, stats, filters, onHour) {
-  clear(element); if (!stats.validTime) {empty(element,'No usable occurrence times in this selection.');return;}
+  clear(element); if (!stats.validHours) {empty(element,'No usable occurrence times in this selection.');return;}
   const d3=window.d3,{width:W,height:H}=chartSize(element,170),m={left:34,right:6,top:9,bottom:30};
   const svg=node('svg',{viewBox:`0 0 ${W} ${H}`,class:'chart-svg','aria-label':'Reports by recorded local occurrence hour'});
   const x=d3.scaleBand().domain(stats.hours.map(d=>d.hour)).range([m.left,W-m.right]).padding(.25);

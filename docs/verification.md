@@ -1,6 +1,20 @@
 # Verification record
 
-## All-years population average — 7 November 2026
+## Query reconciliation and all-years default — 8 November 2026
+
+We reproduced the group's hourly and average-per-capita queries independently from the two original JSON exports with `scripts/reconcile_fabric_queries.py`. We preserved raw-file SHA-256 values, all 24 hourly totals, every state rate, and active-year counts in [feedback-reconciliation.json](feedback-reconciliation.json). This is an export-based reproduction, not a live Fabric SQL execution. We use explicit MDY parsing of Date_Fixed and provide [matching SQL](reconciliation-queries.sql), including the app's existing DC abbreviation repair.
+
+The hourly query includes all 139,887 valid TimeOnly values. The former date flag removed 15 otherwise valid clock times: hour 0 lost five; hours 6 and 7 one each; hour 8 two; hour 14 one; hour 20 three; hours 21 and 23 one each. Calendar charts still retain their separate 139,872-date quality scope. Source reports keep their review flags.
+
+We changed the all-years metric to the arithmetic mean of annual rates over active matched years. Zero-report years are absent, matching the group's Yearly_Sightings CTE. Each state rate and active-year count matches the independent source calculation. Vermont leads at 1.94 per 100,000 over 52 active years; California has 191.4 reports per active year over 87 active years. A synthetic three-year example distinguishes an equal-weight active-year mean from a pooled population rate and from averaging over zero-report years. No active years produces an unavailable average rather than zero.
+
+All 139,887 reports remain present. The rate comparison includes 135,475: 3,527 reports are after the population series ends in 2024, and 885 have other missing state-year matches. Three flagged historical dates have valid population joins and are included without removing their flags. The raw, unnormalized SQL join includes 135,318 reports because it drops DC's 157 matched reports. We retain the established DC correction and document it in the matching query.
+
+Our current suite passes **27 JavaScript checks and two Python importer checks**. The checks reconcile all hourly bins, every state's active-year average, counts and mean population, single-year 2024 results, missing/no-active states, CSV fields, duplicate denominators, historical flags, default routing, and isolation of population periods from general year filters.
+
+In the local browser we verified a fresh Population link defaults to All years, the 135,475 matched total and visible 4,412 exclusions, Vermont's 52-year detail, all 642 Vermont reports in the all-years drill-down, 2024's unchanged 3,370 compared reports, and returning to Explore with all 139,887 reports and empty calendar bounds. All 24 rendered hourly bar labels agree with the raw-export check. Reload preserves All years; CSV export reports success. The 375px mobile viewport has no horizontal overflow. We observed no browser errors in these inspected flows.
+
+## All-years population average — 7 November 2026 (superseded)
 
 We added All years alongside the existing single-year selector. The current shared window is 1905–2024. We include state-years with population data, including years with no reports. Each state’s annual rate is its included reports divided by summed annual populations, multiplied by 100,000. Its scatter coordinates are mean population and mean annual report count across those same covered years.
 

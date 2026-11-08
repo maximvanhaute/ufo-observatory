@@ -28,7 +28,8 @@ We use `Final File Swear on god for now!.json`, the group’s corrected Fabric e
 | Unique report IDs retained | 139,887 |
 | Reports mapped to the 50 US states and Washington, DC | 139,671 |
 | Territory reports retained outside that map | 216 |
-| Reports eligible for time charts | 139,872 |
+| Reports eligible for calendar charts | 139,872 |
+| Reports with valid clock times in the hourly chart | 139,887 |
 | Pre-1900 dates retained with a review flag | 15 |
 | Reports without a supplied summary | 68 |
 | Source indicates media: Yes / No | 6,836 / 133,051 |
@@ -41,11 +42,13 @@ We use the user-supplied UFO landing sound by Altered Sound Effects. The opening
 
 ## Our population comparison
 
-We open **Patterns → Population** and choose one occurrence year or **All years · annual average**. We start with **2024**, the latest population year. The scatter plot compares population against report count. We can switch the ranking and map between total reports and reports per 100,000 residents. Selecting a state highlights it across the comparison and offers its source reports.
+We open **Patterns → Population** and choose one occurrence year or **All years · annual average**. We default to **All years**. Choosing a population period does not change the year filters on other pages. The scatter plot compares population against report count. We can switch the ranking and map between total reports and reports per 100,000 residents. Selecting a state highlights it across the comparison and offers its source reports.
 
 We join population on **state code + occurrence year** and use each state-year denominator once. Our rate is the filtered report count divided by that state’s population in the same year, multiplied by 100,000. Shape, month, local hour, media, and search filters affect the count. State selection highlights the comparison rather than reducing it to one point. Our CSV includes counts, denominators, rates, and unmatched-state status.
 
-In **All years**, we compare 1905–2024 using every available state-year population, including covered years with zero reports. We divide each state’s included report count by its summed annual populations and multiply by 100,000 to get an average annual reporting rate. The scatter and count ranking show average annual reports and average population across the same covered years. Hawaii has 75 covered years (1950–2024), while most states have 120. Tooltips and the CSV disclose that coverage. We exclude missing state-years and the unsupported 2025–2026 period.
+In **All years**, we first calculate each state’s rate in each matched occurrence year, then take the arithmetic mean of those annual rates. This matches our group’s `AVG(Yearly_Rate_Per_100k)` query. Each active year has equal weight; a year is active when it has at least one filtered report and a matching population. Zero-report years do not enter that query or the app’s average. We show active-year counts in tooltips and CSV. The scatter and count ranking show mean reports and mean population over those same active years. This is an average across observed active years, not a rate over every calendar year.
+
+We retain all **139,887** reports. The all-years rate comparison uses **135,475** with matching populations. Of the **4,412** unmatched reports, **3,527** are from 2025–2026, after the population file ends; **885** have another missing state-year match. The supplied SQL without DC’s abbreviation repair uses 135,318 reports: its join drops DC’s 157 matched reports. Vermont leads the active-year rate at **1.94 per 100,000**, across **52 active years**. We reproduce all 24 hourly totals and every state average independently from the raw exports in [our reconciliation record](docs/feedback-reconciliation.json); [matching SQL](docs/reconciliation-queries.sql) includes the same DC normalization.
 
 For 2024, we compare **3,370 reports across 49 states and DC**. California has 334 reports (0.85 per 100,000), and Montana has 35 (3.08 per 100,000). Alaska’s recent population is missing from the supplied file. Population stops at 2024, so we show an unavailable state for 2025–2026. We fill DC’s abbreviation from its exact full name. The population file’s original publisher and estimation method remain unprovided and are disclosed in the app.
 
@@ -67,7 +70,7 @@ We run our automated checks with:
 node --test tests/*.test.mjs
 ```
 
-Our current suite has **22 JavaScript checks and two Python importer checks**. We run the Python checks with `python3 -m unittest discover -s tests -p "test_*.py"`, or run both suites with `npm test`. Our [verification record](docs/verification.md) distinguishes automated checks, full source reconciliation, and sampled browser checks.
+Our current suite has **27 JavaScript checks and two Python importer checks**. We run the Python checks with `python3 -m unittest discover -s tests -p "test_*.py"`, or run both suites with `npm test`. Our [verification record](docs/verification.md) distinguishes automated checks, full source reconciliation, and sampled browser checks.
 
 ## How our data reaches the app
 

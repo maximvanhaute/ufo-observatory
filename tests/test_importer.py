@@ -32,9 +32,11 @@ class CorrectedImportTests(unittest.TestCase):
                     'MediaAvailability': 'No', 'Summary': 'Source summary',
                 }
                 source = folder / 'corrected.json'
-                source.write_text(json.dumps(row) + '\n')
+                historical = {**row, 'ID':124, 'ArticleLink':'https://nuforc.org/sighting/?id=124', 'Date_Fixed':'04/17/1897'}
+                source.write_text(json.dumps(row) + '\n' + json.dumps(historical) + '\n')
                 pop = folder / 'population.json'
-                pop.write_text(json.dumps({'state':'Texas', 'state_abbr':'TX', 'year':2024, 'population':31290831}) + '\n')
+                pop.write_text(json.dumps([{'state':'Texas', 'state_abbr':'TX', 'year':2024, 'population':31290831},
+                                          {'state':'Texas', 'state_abbr':'TX', 'year':1897, 'population':1000}]))
                 previous_root, previous_data = adapter.ROOT, adapter.DATA
                 try:
                     adapter.ROOT, adapter.DATA = folder, folder / 'dist/data'
@@ -45,9 +47,16 @@ class CorrectedImportTests(unittest.TestCase):
                     reports = json.loads(gzip.decompress((folder / 'dist/data' / index['parts'][0]).read_bytes()))
                 finally:
                     adapter.ROOT, adapter.DATA = previous_root, previous_data
-                self.assertEqual(len(reports), 1)
+                self.assertEqual(len(reports), 2)
                 self.assertEqual(reports[0]['occurred_at_local'], '2024-02-03T00:15:30')
                 self.assertEqual(reports[0]['state_population'], 31290831)
+                self.assertEqual(reports[1]['state_population'], 1000)
+                self.assertEqual(reports[1]['population_year'], 1897)
+                self.assertIn('suspicious_year', reports[1]['quality_flags'])
+                self.assertFalse(reports[1]['eligible_for_time_analysis'])
+                summary = json.loads((folder / 'dist/data/summaries.json').read_text())
+                self.assertEqual(summary['quality']['valid_hour_reports'], 2)
+                self.assertEqual(summary['by_hour'][0]['report_count'], 2)
 
     def test_duplicate_state_year_is_rejected(self):
         with tempfile.TemporaryDirectory() as temporary:

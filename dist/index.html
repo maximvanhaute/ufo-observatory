@@ -112,7 +112,7 @@
   <div class="population-chart-grid">
     <article class="panel population-scatter-panel">
       <div class="panel-heading"><div><h3>Does population explain the count?</h3><p>Each dot is a state or DC. Select one to explore.</p></div></div>
-      <div class="population-reference-key"><span aria-hidden="true"></span>Same reports per resident · matched-area average</div>
+      <div class="population-reference-key"><span aria-hidden="true"></span>Pooled reports per resident · proportional reference</div>
       <div id="population-scatter"></div>
       <p class="chart-footnote">Population and occurrence year are matched. The dashed line is a proportional reference, rather than a fitted trend.</p>
     </article>
@@ -135,7 +135,7 @@
   <p id="population-coverage-note" class="population-coverage-note"></p>
   <details class="population-method">
     <summary>How we calculate the comparison</summary>
-    <p>For one year, reports per 100,000 residents = filtered reports ÷ that state’s population in the same year × 100,000. For All years, the average annual rate = total filtered reports in covered state-years ÷ the sum of those annual populations × 100,000. We include covered years with zero reports.</p><p>In All years, the count ranking and scatter show average annual reports, and the population axis shows average population across the same covered years. Tooltips and CSV show each state’s covered years. Hawaii has shorter historical coverage. Years after 2024 and state-years with missing population are excluded from the average.</p>
+    <p>For one year, reports per 100,000 residents = filtered reports ÷ that state’s population in the same year × 100,000. For All years, we calculate each annual rate first, then take their arithmetic mean. Each active year has equal weight. An active year has at least one matching report and a population value; years with zero reports are not averaged.</p><p>The count ranking and scatter show reports per active year and mean population over those same active years. Tooltips and CSV include Active_Years_Count. A state with no active years has no average. This matches our group’s AVG of annual rates query. Calendar-date review flags remain visible on reports; valid Date_Fixed values can still match historical populations.</p><p>All 139,887 reports stay in the app. Population rates can use only matching state-years. The supplied population data ends in 2024, so 2025–2026 reports have no denominator and cannot enter the rates.</p>
     <p>Shape, month, local hour, media and search filters change the report count. The denominator remains the full population for the covered year or years. These filtered rates describe self-reported accounts. Population alone cannot establish what caused a sighting or a report.</p>
     <p>Population source is the group-supplied State_Population.json, covering years through 2024. Its original publisher and estimation method have yet to be supplied. Washington, DC is mapped by its full name. We keep missing populations unavailable, with no interpolation or use of another year.</p>
     <p>The state comparison and its CSV cover the 50 states and Washington, DC. Territory reports remain in the report explorer. The CSV includes unmatched states with an empty population and rate, and a coverage status.</p>

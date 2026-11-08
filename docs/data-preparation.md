@@ -19,7 +19,7 @@ We ignore the original Date and Time columns and the Date_Corrected column. We p
 
 We parse ReportedDate separately in month-day-year order and preserve it as reporting metadata. It is never used as the occurrence year or the population join year.
 
-We retain 15 pre-1900 records with a suspicious_year flag. They remain available as reports and are excluded from time charts and time-based filters. The current snapshot has **139,872 usable occurrence dates**, spanning 6 July 1905 through 6 March 2026.
+We retain 15 pre-1900 records with a suspicious_year flag. They remain available as reports and are excluded from calendar charts and ordinary calendar filters. Their valid TimeOnly values remain in hour-only charts and filters. The population view uses valid Date_Fixed values, including flagged historical years, to match the supplied SQL. The current snapshot has **139,872 usable occurrence dates**, spanning 6 July 1905 through 6 March 2026.
 
 Our previous 3 November export had 139,903 reports and mixed MDY/DMY dates. That historical import used a pinned original-ID date reference. We retain support for that older input schema, but the corrected export uses the group-designated fields directly.
 
@@ -27,7 +27,7 @@ Our previous 3 November export had 139,903 reports and mixed MDY/DMY dates. That
 
 We retain population as a dimension keyed by **state_code + year**. We map the 135 District of Columbia records without abbreviations to DC using the exact full name. We reject duplicate keys, unknown states, and non-positive populations. These checks prevent a many-to-many join from multiplying reports.
 
-For each time-eligible report, we join its state and occurrence year to that dimension. We add state_population, population_year, and population_status. A missing match has a null population and an explicit status. We preserve the original report grain and every supplied ID.
+For each report with a valid Date_Fixed value, we join its state and occurrence year to that dimension. Calendar quality flags remain attached and do not suppress an otherwise valid population join. We add state_population, population_year, and population_status. A missing match has a null population and an explicit status. We preserve the original report grain and every supplied ID.
 
 We use each denominator once when calculating the comparison:
 
@@ -38,25 +38,29 @@ reports per 100,000 residents =
   * 100,000
 ```
 
-We include zero-report states when their population is available. We keep missing population distinct from zero and apply no interpolation, carry-forward, or population from a different year.
+In a single year we include zero-report states when their population is available. For the all-years average, we use active years as described below. We keep missing population distinct from zero and apply no interpolation, carry-forward, or population from a different year.
 
 The population file ends in 2024. Alaska has no recent population values in the supplied file. For 2024, we match 49 states plus DC and compare **3,370 reports**. We exclude 15 Alaska reports and one US Virgin Islands report from that population comparison. Territory reports and Alaska reports remain available in the report explorer. The map shows unavailable state populations in gray with dashed borders.
 
-Across the complete export, 135,472 reports have a population match, 4,400 time-eligible reports lack a state-year match, and 15 have flagged dates. These categories sum to 139,887.
+Across the complete export, 135,475 reports have a population match and 4,412 lack a state-year match. These categories sum to 139,887. Three of the 15 flagged historical dates have valid population matches; their review flags are preserved.
 
 ## Our interactive comparison
 
 We support a single occurrence year and an All years annual average. We preserve the shape, month, local hour, media, and text-search filters. They affect the report count, while the denominator remains the full population for that year. We describe rates as filtered reports per resident, with no annualisation of selected months or hours.
 
-For All years, we use the overlap between eligible report dates and the population file, currently **1905–2024**. For each state we include reports only in years with that state’s population. We include population years with zero reports. We calculate the average annual rate as total included reports divided by summed annual populations, multiplied by 100,000. This weights the annual rates by population.
+For All years, we reproduce the group’s query: count reports by state and occurrence year, join to that exact state-year population, calculate each annual rate, and then take the unweighted arithmetic mean of the rates. An **active year** has at least one filtered report and a matching population. We exclude years with no sightings from the average because they do not produce a Yearly_Sightings row in the supplied query. A state with no active years has an unavailable average, not zero. This definition differs from our 7 November implementation, which pooled populations and included zero-report years.
 
-We show average annual reports as included reports divided by covered years. The population axis shows the arithmetic mean population over the same covered years. Hawaii has 75 years of coverage (1950–2024), most areas have 120 years, and Alaska remains unavailable. Different coverage windows are visible in tooltips, selected-state details, and the exported table.
+We show mean reports and mean population over the same active years on the scatter plot. We retain total matched reports and Active_Years_Count in the selected-state details and CSV. We round only for display. The proportional reference line still uses pooled reports divided by pooled populations over the included active state-years; it is labelled as a pooled reference rather than the mean of the state rates.
 
-The All years comparison includes **135,472 reports** with population matches. Within 1905–2024, 873 reports lack a state-year match. A further 3,527 eligible reports from 2025–2026 fall outside the population period. We keep the 15 flagged dates outside time analysis. These categories reconcile to the complete 139,887-report export.
+We default to All years and keep its period separate from calendar filters on Explore, Reports, and Time & shapes. Switching pages does not silently impose 2024. Explicit single-year population links remain supported. The Read reports button applies the chosen population year to that drill-down, or clears year bounds for All years.
 
-State report drill-down shows all reports matching the selected state and date period. The selected-state card distinguishes the state’s report total from the number included in population calculations.
+The All years comparison starts with all **139,887 reports** and includes **135,475** with population matches. Of **4,412** unmatched reports, **3,527** occur in 2025–2026 after the population series ends; the other **885** have missing state-year matches. Alaska has population values only in 1880 and 1890 and no reports in those years, so it has no active matched years. The dimension spans 1790–2024, with varying historical coverage. We do not extend populations to unsupported years.
 
-We compare all states and highlight the selected state. This keeps the scatter plot and ranking useful while users read the selected state’s reports. The count/rate switch affects both the ranking and the map. The scatter always uses population and report count, with a reference line based on the weighted rate across matched areas. The line is a proportional comparison rather than a regression.
+The raw population file has 135 DC rows without state_abbr. The original unnormalized query therefore skips DC and matches **135,318 reports**, 157 fewer than the app. Our [matching SQL](reconciliation-queries.sql) fills DC from its exact full name and explicitly parses the agreed MDY Date_Fixed format. We reproduced it from the exported source files; we have not executed it against the live Lakehouse. The [reconciliation record](feedback-reconciliation.json) contains all hourly buckets, active-year counts, and state averages, with both raw-file fingerprints. Vermont leads at **1.94 per 100,000 per active year** over 52 active years; California has **191.4 reports per active year** over 87 active years.
+
+State report drill-down shows all reports matching the selected state and chosen period. The selected-state card distinguishes the state’s report total from the number included in population calculations.
+
+We compare all states and highlight the selected state. This keeps the scatter plot and ranking useful while users read the selected state’s reports. The count/rate switch affects both the ranking and the map. The scatter always uses population and report count, with a reference line based on the pooled rate across included active state-years. The line is a proportional comparison rather than a regression.
 
 Shared URLs preserve the Population tab, occurrence year, measure, state, and report filters. The population CSV includes all 51 state/DC rows, including missing denominators and coverage status.
 

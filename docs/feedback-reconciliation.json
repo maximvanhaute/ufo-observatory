@@ -1,0 +1,1240 @@
+{
+  "source_files": {
+    "Final File Swear on god for now!.json": "28ba2502fa4450a7ba29141f87fcc1b091362f8aad6a722e8944071b4eff5ea1",
+    "State_Population.json": "8c924530e1c17a94c4e008324969fe860284d82d0f9462083e76afec1d970604"
+  },
+  "scope": "Recomputed from supplied export files, not a live Fabric SQL execution.",
+  "date_policy": "Date_Fixed parsed as MDY; calendar flags do not remove valid clock times or valid population join dates.",
+  "average_policy": "Arithmetic mean of annual rates over active matched state-years, as in the supplied SQL. Zero-report years absent.",
+  "input_rows": 139887,
+  "null_ids": 0,
+  "hours": [
+    {
+      "hour": 0,
+      "count": 7880,
+      "previous_date_flag_exclusions": 5
+    },
+    {
+      "hour": 1,
+      "count": 5150,
+      "previous_date_flag_exclusions": 0
+    },
+    {
+      "hour": 2,
+      "count": 3823,
+      "previous_date_flag_exclusions": 0
+    },
+    {
+      "hour": 3,
+      "count": 3603,
+      "previous_date_flag_exclusions": 0
+    },
+    {
+      "hour": 4,
+      "count": 2913,
+      "previous_date_flag_exclusions": 0
+    },
+    {
+      "hour": 5,
+      "count": 3455,
+      "previous_date_flag_exclusions": 0
+    },
+    {
+      "hour": 6,
+      "count": 2746,
+      "previous_date_flag_exclusions": 1
+    },
+    {
+      "hour": 7,
+      "count": 1809,
+      "previous_date_flag_exclusions": 1
+    },
+    {
+      "hour": 8,
+      "count": 1581,
+      "previous_date_flag_exclusions": 2
+    },
+    {
+      "hour": 9,
+      "count": 1840,
+      "previous_date_flag_exclusions": 0
+    },
+    {
+      "hour": 10,
+      "count": 2178,
+      "previous_date_flag_exclusions": 0
+    },
+    {
+      "hour": 11,
+      "count": 2092,
+      "previous_date_flag_exclusions": 0
+    },
+    {
+      "hour": 12,
+      "count": 2504,
+      "previous_date_flag_exclusions": 0
+    },
+    {
+      "hour": 13,
+      "count": 2316,
+      "previous_date_flag_exclusions": 0
+    },
+    {
+      "hour": 14,
+      "count": 2316,
+      "previous_date_flag_exclusions": 1
+    },
+    {
+      "hour": 15,
+      "count": 2535,
+      "previous_date_flag_exclusions": 0
+    },
+    {
+      "hour": 16,
+      "count": 2956,
+      "previous_date_flag_exclusions": 0
+    },
+    {
+      "hour": 17,
+      "count": 4604,
+      "previous_date_flag_exclusions": 0
+    },
+    {
+      "hour": 18,
+      "count": 7560,
+      "previous_date_flag_exclusions": 0
+    },
+    {
+      "hour": 19,
+      "count": 10939,
+      "previous_date_flag_exclusions": 0
+    },
+    {
+      "hour": 20,
+      "count": 15290,
+      "previous_date_flag_exclusions": 3
+    },
+    {
+      "hour": 21,
+      "count": 19975,
+      "previous_date_flag_exclusions": 1
+    },
+    {
+      "hour": 22,
+      "count": 17554,
+      "previous_date_flag_exclusions": 0
+    },
+    {
+      "hour": 23,
+      "count": 12268,
+      "previous_date_flag_exclusions": 1
+    }
+  ],
+  "original_sql_join": {
+    "matched_reports": 135318,
+    "excluded_reports": {
+      "missing_state_year": 1042,
+      "after_population_end": 3527
+    },
+    "states": [
+      {
+        "state_code": "VT",
+        "state_name": "Vermont",
+        "active_years": 52,
+        "reports": 623,
+        "average_annual_sightings_per_100k": 1.9396171080554676,
+        "average_reports_per_active_year": 11.98076923076923,
+        "average_population_active_years": 568814.3653846154,
+        "active_start_year": 1958,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "MT",
+        "state_name": "Montana",
+        "active_years": 61,
+        "reports": 1046,
+        "average_annual_sightings_per_100k": 1.742993030170867,
+        "average_reports_per_active_year": 17.147540983606557,
+        "average_population_active_years": 862991.393442623,
+        "active_start_year": 1920,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "ID",
+        "state_name": "Idaho",
+        "active_years": 58,
+        "reports": 1406,
+        "average_annual_sightings_per_100k": 1.5423945277771063,
+        "average_reports_per_active_year": 24.24137931034483,
+        "average_population_active_years": 1215448.2241379311,
+        "active_start_year": 1932,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "NH",
+        "state_name": "New Hampshire",
+        "active_years": 64,
+        "reports": 1219,
+        "average_annual_sightings_per_100k": 1.4812109786202938,
+        "average_reports_per_active_year": 19.046875,
+        "average_population_active_years": 1074781.3125,
+        "active_start_year": 1956,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "WA",
+        "state_name": "Washington",
+        "active_years": 79,
+        "reports": 7409,
+        "average_annual_sightings_per_100k": 1.4758037992837951,
+        "average_reports_per_active_year": 93.78481012658227,
+        "average_population_active_years": 4682206.113924051,
+        "active_start_year": 1880,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "WY",
+        "state_name": "Wyoming",
+        "active_years": 55,
+        "reports": 421,
+        "average_annual_sightings_per_100k": 1.435206593479259,
+        "average_reports_per_active_year": 7.654545454545454,
+        "average_population_active_years": 474684.07272727275,
+        "active_start_year": 1949,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "ME",
+        "state_name": "Maine",
+        "active_years": 67,
+        "reports": 1240,
+        "average_annual_sightings_per_100k": 1.4169249742271852,
+        "average_reports_per_active_year": 18.507462686567163,
+        "average_population_active_years": 1178700.3582089553,
+        "active_start_year": 1910,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "OR",
+        "state_name": "Oregon",
+        "active_years": 73,
+        "reports": 3668,
+        "average_annual_sightings_per_100k": 1.344673335617424,
+        "average_reports_per_active_year": 50.24657534246575,
+        "average_population_active_years": 2853455.7397260275,
+        "active_start_year": 1905,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "NM",
+        "state_name": "New Mexico",
+        "active_years": 69,
+        "reports": 1720,
+        "average_annual_sightings_per_100k": 1.305949966753029,
+        "average_reports_per_active_year": 24.92753623188406,
+        "average_population_active_years": 1508588.4927536233,
+        "active_start_year": 1929,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "AZ",
+        "state_name": "Arizona",
+        "active_years": 68,
+        "reports": 5158,
+        "average_annual_sightings_per_100k": 1.278317103321125,
+        "average_reports_per_active_year": 75.8529411764706,
+        "average_population_active_years": 4056987.588235294,
+        "active_start_year": 1946,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "NV",
+        "state_name": "Nevada",
+        "active_years": 64,
+        "reports": 1743,
+        "average_annual_sightings_per_100k": 1.21462756879492,
+        "average_reports_per_active_year": 27.234375,
+        "average_population_active_years": 1594690.984375,
+        "active_start_year": 1947,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "SD",
+        "state_name": "South Dakota",
+        "active_years": 48,
+        "reports": 415,
+        "average_annual_sightings_per_100k": 1.055232323711599,
+        "average_reports_per_active_year": 8.645833333333334,
+        "average_population_active_years": 767398.875,
+        "active_start_year": 1947,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "RI",
+        "state_name": "Rhode Island",
+        "active_years": 56,
+        "reports": 616,
+        "average_annual_sightings_per_100k": 1.0465621614733343,
+        "average_reports_per_active_year": 11.0,
+        "average_population_active_years": 997710.6607142857,
+        "active_start_year": 1944,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "HI",
+        "state_name": "Hawaii",
+        "active_years": 53,
+        "reports": 685,
+        "average_annual_sightings_per_100k": 0.9757621848934735,
+        "average_reports_per_active_year": 12.924528301886792,
+        "average_population_active_years": 1159800.3207547169,
+        "active_start_year": 1960,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "CO",
+        "state_name": "Colorado",
+        "active_years": 73,
+        "reports": 3413,
+        "average_annual_sightings_per_100k": 0.953598615653295,
+        "average_reports_per_active_year": 46.75342465753425,
+        "average_population_active_years": 3446948.0410958906,
+        "active_start_year": 1905,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "DE",
+        "state_name": "Delaware",
+        "active_years": 52,
+        "reports": 435,
+        "average_annual_sightings_per_100k": 0.9483998272307228,
+        "average_reports_per_active_year": 8.365384615384615,
+        "average_population_active_years": 754195.8653846154,
+        "active_start_year": 1949,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "UT",
+        "state_name": "Utah",
+        "active_years": 69,
+        "reports": 1587,
+        "average_annual_sightings_per_100k": 0.8651686180155019,
+        "average_reports_per_active_year": 23.0,
+        "average_population_active_years": 1902418.2318840579,
+        "active_start_year": 1944,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "ND",
+        "state_name": "North Dakota",
+        "active_years": 48,
+        "reports": 281,
+        "average_annual_sightings_per_100k": 0.8397202770742455,
+        "average_reports_per_active_year": 5.854166666666667,
+        "average_population_active_years": 675384.9166666666,
+        "active_start_year": 1934,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "CT",
+        "state_name": "Connecticut",
+        "active_years": 71,
+        "reports": 2080,
+        "average_annual_sightings_per_100k": 0.8343103693483034,
+        "average_reports_per_active_year": 29.295774647887324,
+        "average_population_active_years": 3181714.4788732394,
+        "active_start_year": 1949,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "WV",
+        "state_name": "West Virginia",
+        "active_years": 62,
+        "reports": 933,
+        "average_annual_sightings_per_100k": 0.8246240336931118,
+        "average_reports_per_active_year": 15.048387096774194,
+        "average_population_active_years": 1839341.5322580645,
+        "active_start_year": 1944,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "SC",
+        "state_name": "South Carolina",
+        "active_years": 69,
+        "reports": 2305,
+        "average_annual_sightings_per_100k": 0.7252146542787294,
+        "average_reports_per_active_year": 33.405797101449274,
+        "average_population_active_years": 3614337.2608695654,
+        "active_start_year": 1939,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "AR",
+        "state_name": "Arkansas",
+        "active_years": 68,
+        "reports": 1325,
+        "average_annual_sightings_per_100k": 0.693582047463146,
+        "average_reports_per_active_year": 19.485294117647058,
+        "average_population_active_years": 2430503.0588235296,
+        "active_start_year": 1950,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "KS",
+        "state_name": "Kansas",
+        "active_years": 66,
+        "reports": 1238,
+        "average_annual_sightings_per_100k": 0.6726764425007444,
+        "average_reports_per_active_year": 18.757575757575758,
+        "average_population_active_years": 2529732.3181818184,
+        "active_start_year": 1931,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "WI",
+        "state_name": "Wisconsin",
+        "active_years": 68,
+        "reports": 2520,
+        "average_annual_sightings_per_100k": 0.6628936376260209,
+        "average_reports_per_active_year": 37.05882352941177,
+        "average_population_active_years": 4959991.955882353,
+        "active_start_year": 1947,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "NE",
+        "state_name": "Nebraska",
+        "active_years": 61,
+        "reports": 718,
+        "average_annual_sightings_per_100k": 0.6534508123363554,
+        "average_reports_per_active_year": 11.770491803278688,
+        "average_population_active_years": 1661740.6229508198,
+        "active_start_year": 1943,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "IA",
+        "state_name": "Iowa",
+        "active_years": 65,
+        "reports": 1263,
+        "average_annual_sightings_per_100k": 0.6374900300203556,
+        "average_reports_per_active_year": 19.43076923076923,
+        "average_population_active_years": 2913967.2615384613,
+        "active_start_year": 1939,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "MO",
+        "state_name": "Missouri",
+        "active_years": 78,
+        "reports": 2870,
+        "average_annual_sightings_per_100k": 0.6302792707795107,
+        "average_reports_per_active_year": 36.794871794871796,
+        "average_population_active_years": 5059751.0,
+        "active_start_year": 1907,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "OK",
+        "state_name": "Oklahoma",
+        "active_years": 69,
+        "reports": 1555,
+        "average_annual_sightings_per_100k": 0.6137258100483456,
+        "average_reports_per_active_year": 22.536231884057973,
+        "average_population_active_years": 3171439.144927536,
+        "active_start_year": 1947,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "FL",
+        "state_name": "Florida",
+        "active_years": 77,
+        "reports": 8530,
+        "average_annual_sightings_per_100k": 0.6083157002541995,
+        "average_reports_per_active_year": 110.77922077922078,
+        "average_population_active_years": 11994649.16883117,
+        "active_start_year": 1944,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "MA",
+        "state_name": "Massachusetts",
+        "active_years": 72,
+        "reports": 2804,
+        "average_annual_sightings_per_100k": 0.590306664064404,
+        "average_reports_per_active_year": 38.94444444444444,
+        "average_population_active_years": 6009260.736111111,
+        "active_start_year": 1953,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "KY",
+        "state_name": "Kentucky",
+        "active_years": 71,
+        "reports": 1755,
+        "average_annual_sightings_per_100k": 0.5838842489235532,
+        "average_reports_per_active_year": 24.718309859154928,
+        "average_population_active_years": 3751318.4788732394,
+        "active_start_year": 1943,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "IN",
+        "state_name": "Indiana",
+        "active_years": 75,
+        "reports": 2797,
+        "average_annual_sightings_per_100k": 0.5833346139134327,
+        "average_reports_per_active_year": 37.29333333333334,
+        "average_population_active_years": 5581489.773333333,
+        "active_start_year": 1920,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "NC",
+        "state_name": "North Carolina",
+        "active_years": 71,
+        "reports": 3796,
+        "average_annual_sightings_per_100k": 0.5778010063993751,
+        "average_reports_per_active_year": 53.46478873239437,
+        "average_population_active_years": 7008170.830985916,
+        "active_start_year": 1860,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "TN",
+        "state_name": "Tennessee",
+        "active_years": 67,
+        "reports": 2388,
+        "average_annual_sightings_per_100k": 0.5712015785842268,
+        "average_reports_per_active_year": 35.64179104477612,
+        "average_population_active_years": 5111029.104477612,
+        "active_start_year": 1940,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "MN",
+        "state_name": "Minnesota",
+        "active_years": 75,
+        "reports": 2202,
+        "average_annual_sightings_per_100k": 0.5603657174070219,
+        "average_reports_per_active_year": 29.36,
+        "average_population_active_years": 4358242.72,
+        "active_start_year": 1932,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "CA",
+        "state_name": "California",
+        "active_years": 87,
+        "reports": 16652,
+        "average_annual_sightings_per_100k": 0.5422338262916258,
+        "average_reports_per_active_year": 191.4022988505747,
+        "average_population_active_years": 24557733.36781609,
+        "active_start_year": 1918,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "PA",
+        "state_name": "Pennsylvania",
+        "active_years": 78,
+        "reports": 5196,
+        "average_annual_sightings_per_100k": 0.5274323855428462,
+        "average_reports_per_active_year": 66.61538461538461,
+        "average_population_active_years": 11886061.0,
+        "active_start_year": 1917,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "OH",
+        "state_name": "Ohio",
+        "active_years": 76,
+        "reports": 4569,
+        "average_annual_sightings_per_100k": 0.5233718910710287,
+        "average_reports_per_active_year": 60.11842105263158,
+        "average_population_active_years": 10709106.355263159,
+        "active_start_year": 1947,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "MI",
+        "state_name": "Michigan",
+        "active_years": 74,
+        "reports": 3776,
+        "average_annual_sightings_per_100k": 0.5173727133272373,
+        "average_reports_per_active_year": 51.027027027027025,
+        "average_population_active_years": 9057314.027027028,
+        "active_start_year": 1936,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "VA",
+        "state_name": "Virginia",
+        "active_years": 69,
+        "reports": 2781,
+        "average_annual_sightings_per_100k": 0.5159415898475004,
+        "average_reports_per_active_year": 40.30434782608695,
+        "average_population_active_years": 6231467.391304348,
+        "active_start_year": 1945,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "IL",
+        "state_name": "Illinois",
+        "active_years": 74,
+        "reports": 4395,
+        "average_annual_sightings_per_100k": 0.4727977180050358,
+        "average_reports_per_active_year": 59.391891891891895,
+        "average_population_active_years": 11477871.0,
+        "active_start_year": 1925,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "NJ",
+        "state_name": "New Jersey",
+        "active_years": 74,
+        "reports": 3004,
+        "average_annual_sightings_per_100k": 0.4679864528068525,
+        "average_reports_per_active_year": 40.5945945945946,
+        "average_population_active_years": 7628145.6486486485,
+        "active_start_year": 1930,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "MD",
+        "state_name": "Maryland",
+        "active_years": 73,
+        "reports": 1932,
+        "average_annual_sightings_per_100k": 0.4678394784428167,
+        "average_reports_per_active_year": 26.465753424657535,
+        "average_population_active_years": 4576409.082191781,
+        "active_start_year": 1946,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "AL",
+        "state_name": "Alabama",
+        "active_years": 67,
+        "reports": 1454,
+        "average_annual_sightings_per_100k": 0.46485362824028387,
+        "average_reports_per_active_year": 21.70149253731343,
+        "average_population_active_years": 4102080.970149254,
+        "active_start_year": 1939,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "MS",
+        "state_name": "Mississippi",
+        "active_years": 63,
+        "reports": 810,
+        "average_annual_sightings_per_100k": 0.4495675198219602,
+        "average_reports_per_active_year": 12.857142857142858,
+        "average_population_active_years": 2637170.3492063493,
+        "active_start_year": 1949,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "GA",
+        "state_name": "Georgia",
+        "active_years": 69,
+        "reports": 2821,
+        "average_annual_sightings_per_100k": 0.44259062349324274,
+        "average_reports_per_active_year": 40.88405797101449,
+        "average_population_active_years": 6995847.739130435,
+        "active_start_year": 1942,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "NY",
+        "state_name": "New York",
+        "active_years": 81,
+        "reports": 6135,
+        "average_annual_sightings_per_100k": 0.39737517763545716,
+        "average_reports_per_active_year": 75.74074074074075,
+        "average_population_active_years": 17620633.97530864,
+        "active_start_year": 1790,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "LA",
+        "state_name": "Louisiana",
+        "active_years": 71,
+        "reports": 1189,
+        "average_annual_sightings_per_100k": 0.37402174148391026,
+        "average_reports_per_active_year": 16.746478873239436,
+        "average_population_active_years": 4058203.8732394367,
+        "active_start_year": 1943,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "TX",
+        "state_name": "Texas",
+        "active_years": 80,
+        "reports": 6440,
+        "average_annual_sightings_per_100k": 0.3475345386977603,
+        "average_reports_per_active_year": 80.5,
+        "average_population_active_years": 16763125.475,
+        "active_start_year": 1910,
+        "active_end_year": 2024
+      }
+    ]
+  },
+  "app_normalized_dc_join": {
+    "matched_reports": 135475,
+    "excluded_reports": {
+      "missing_state_year": 885,
+      "after_population_end": 3527
+    },
+    "states": [
+      {
+        "state_code": "VT",
+        "state_name": "Vermont",
+        "active_years": 52,
+        "reports": 623,
+        "average_annual_sightings_per_100k": 1.9396171080554676,
+        "average_reports_per_active_year": 11.98076923076923,
+        "average_population_active_years": 568814.3653846154,
+        "active_start_year": 1958,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "MT",
+        "state_name": "Montana",
+        "active_years": 61,
+        "reports": 1046,
+        "average_annual_sightings_per_100k": 1.742993030170867,
+        "average_reports_per_active_year": 17.147540983606557,
+        "average_population_active_years": 862991.393442623,
+        "active_start_year": 1920,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "ID",
+        "state_name": "Idaho",
+        "active_years": 58,
+        "reports": 1406,
+        "average_annual_sightings_per_100k": 1.5423945277771063,
+        "average_reports_per_active_year": 24.24137931034483,
+        "average_population_active_years": 1215448.2241379311,
+        "active_start_year": 1932,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "NH",
+        "state_name": "New Hampshire",
+        "active_years": 64,
+        "reports": 1219,
+        "average_annual_sightings_per_100k": 1.4812109786202938,
+        "average_reports_per_active_year": 19.046875,
+        "average_population_active_years": 1074781.3125,
+        "active_start_year": 1956,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "WA",
+        "state_name": "Washington",
+        "active_years": 79,
+        "reports": 7409,
+        "average_annual_sightings_per_100k": 1.4758037992837951,
+        "average_reports_per_active_year": 93.78481012658227,
+        "average_population_active_years": 4682206.113924051,
+        "active_start_year": 1880,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "WY",
+        "state_name": "Wyoming",
+        "active_years": 55,
+        "reports": 421,
+        "average_annual_sightings_per_100k": 1.435206593479259,
+        "average_reports_per_active_year": 7.654545454545454,
+        "average_population_active_years": 474684.07272727275,
+        "active_start_year": 1949,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "ME",
+        "state_name": "Maine",
+        "active_years": 67,
+        "reports": 1240,
+        "average_annual_sightings_per_100k": 1.4169249742271852,
+        "average_reports_per_active_year": 18.507462686567163,
+        "average_population_active_years": 1178700.3582089553,
+        "active_start_year": 1910,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "OR",
+        "state_name": "Oregon",
+        "active_years": 73,
+        "reports": 3668,
+        "average_annual_sightings_per_100k": 1.344673335617424,
+        "average_reports_per_active_year": 50.24657534246575,
+        "average_population_active_years": 2853455.7397260275,
+        "active_start_year": 1905,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "NM",
+        "state_name": "New Mexico",
+        "active_years": 69,
+        "reports": 1720,
+        "average_annual_sightings_per_100k": 1.305949966753029,
+        "average_reports_per_active_year": 24.92753623188406,
+        "average_population_active_years": 1508588.4927536233,
+        "active_start_year": 1929,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "AZ",
+        "state_name": "Arizona",
+        "active_years": 68,
+        "reports": 5158,
+        "average_annual_sightings_per_100k": 1.278317103321125,
+        "average_reports_per_active_year": 75.8529411764706,
+        "average_population_active_years": 4056987.588235294,
+        "active_start_year": 1946,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "NV",
+        "state_name": "Nevada",
+        "active_years": 64,
+        "reports": 1743,
+        "average_annual_sightings_per_100k": 1.21462756879492,
+        "average_reports_per_active_year": 27.234375,
+        "average_population_active_years": 1594690.984375,
+        "active_start_year": 1947,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "SD",
+        "state_name": "South Dakota",
+        "active_years": 48,
+        "reports": 415,
+        "average_annual_sightings_per_100k": 1.055232323711599,
+        "average_reports_per_active_year": 8.645833333333334,
+        "average_population_active_years": 767398.875,
+        "active_start_year": 1947,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "RI",
+        "state_name": "Rhode Island",
+        "active_years": 56,
+        "reports": 616,
+        "average_annual_sightings_per_100k": 1.0465621614733343,
+        "average_reports_per_active_year": 11.0,
+        "average_population_active_years": 997710.6607142857,
+        "active_start_year": 1944,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "HI",
+        "state_name": "Hawaii",
+        "active_years": 53,
+        "reports": 685,
+        "average_annual_sightings_per_100k": 0.9757621848934735,
+        "average_reports_per_active_year": 12.924528301886792,
+        "average_population_active_years": 1159800.3207547169,
+        "active_start_year": 1960,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "CO",
+        "state_name": "Colorado",
+        "active_years": 73,
+        "reports": 3413,
+        "average_annual_sightings_per_100k": 0.953598615653295,
+        "average_reports_per_active_year": 46.75342465753425,
+        "average_population_active_years": 3446948.0410958906,
+        "active_start_year": 1905,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "DE",
+        "state_name": "Delaware",
+        "active_years": 52,
+        "reports": 435,
+        "average_annual_sightings_per_100k": 0.9483998272307228,
+        "average_reports_per_active_year": 8.365384615384615,
+        "average_population_active_years": 754195.8653846154,
+        "active_start_year": 1949,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "UT",
+        "state_name": "Utah",
+        "active_years": 69,
+        "reports": 1587,
+        "average_annual_sightings_per_100k": 0.8651686180155019,
+        "average_reports_per_active_year": 23.0,
+        "average_population_active_years": 1902418.2318840579,
+        "active_start_year": 1944,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "ND",
+        "state_name": "North Dakota",
+        "active_years": 48,
+        "reports": 281,
+        "average_annual_sightings_per_100k": 0.8397202770742455,
+        "average_reports_per_active_year": 5.854166666666667,
+        "average_population_active_years": 675384.9166666666,
+        "active_start_year": 1934,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "CT",
+        "state_name": "Connecticut",
+        "active_years": 71,
+        "reports": 2080,
+        "average_annual_sightings_per_100k": 0.8343103693483034,
+        "average_reports_per_active_year": 29.295774647887324,
+        "average_population_active_years": 3181714.4788732394,
+        "active_start_year": 1949,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "WV",
+        "state_name": "West Virginia",
+        "active_years": 62,
+        "reports": 933,
+        "average_annual_sightings_per_100k": 0.8246240336931118,
+        "average_reports_per_active_year": 15.048387096774194,
+        "average_population_active_years": 1839341.5322580645,
+        "active_start_year": 1944,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "SC",
+        "state_name": "South Carolina",
+        "active_years": 69,
+        "reports": 2305,
+        "average_annual_sightings_per_100k": 0.7252146542787294,
+        "average_reports_per_active_year": 33.405797101449274,
+        "average_population_active_years": 3614337.2608695654,
+        "active_start_year": 1939,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "DC",
+        "state_name": "District of Columbia",
+        "active_years": 36,
+        "reports": 157,
+        "average_annual_sightings_per_100k": 0.7103883280768212,
+        "average_reports_per_active_year": 4.361111111111111,
+        "average_population_active_years": 645172.9722222222,
+        "active_start_year": 1952,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "AR",
+        "state_name": "Arkansas",
+        "active_years": 68,
+        "reports": 1325,
+        "average_annual_sightings_per_100k": 0.693582047463146,
+        "average_reports_per_active_year": 19.485294117647058,
+        "average_population_active_years": 2430503.0588235296,
+        "active_start_year": 1950,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "KS",
+        "state_name": "Kansas",
+        "active_years": 66,
+        "reports": 1238,
+        "average_annual_sightings_per_100k": 0.6726764425007444,
+        "average_reports_per_active_year": 18.757575757575758,
+        "average_population_active_years": 2529732.3181818184,
+        "active_start_year": 1931,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "WI",
+        "state_name": "Wisconsin",
+        "active_years": 68,
+        "reports": 2520,
+        "average_annual_sightings_per_100k": 0.6628936376260209,
+        "average_reports_per_active_year": 37.05882352941177,
+        "average_population_active_years": 4959991.955882353,
+        "active_start_year": 1947,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "NE",
+        "state_name": "Nebraska",
+        "active_years": 61,
+        "reports": 718,
+        "average_annual_sightings_per_100k": 0.6534508123363554,
+        "average_reports_per_active_year": 11.770491803278688,
+        "average_population_active_years": 1661740.6229508198,
+        "active_start_year": 1943,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "IA",
+        "state_name": "Iowa",
+        "active_years": 65,
+        "reports": 1263,
+        "average_annual_sightings_per_100k": 0.6374900300203556,
+        "average_reports_per_active_year": 19.43076923076923,
+        "average_population_active_years": 2913967.2615384613,
+        "active_start_year": 1939,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "MO",
+        "state_name": "Missouri",
+        "active_years": 78,
+        "reports": 2870,
+        "average_annual_sightings_per_100k": 0.6302792707795107,
+        "average_reports_per_active_year": 36.794871794871796,
+        "average_population_active_years": 5059751.0,
+        "active_start_year": 1907,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "OK",
+        "state_name": "Oklahoma",
+        "active_years": 69,
+        "reports": 1555,
+        "average_annual_sightings_per_100k": 0.6137258100483456,
+        "average_reports_per_active_year": 22.536231884057973,
+        "average_population_active_years": 3171439.144927536,
+        "active_start_year": 1947,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "FL",
+        "state_name": "Florida",
+        "active_years": 77,
+        "reports": 8530,
+        "average_annual_sightings_per_100k": 0.6083157002541995,
+        "average_reports_per_active_year": 110.77922077922078,
+        "average_population_active_years": 11994649.16883117,
+        "active_start_year": 1944,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "MA",
+        "state_name": "Massachusetts",
+        "active_years": 72,
+        "reports": 2804,
+        "average_annual_sightings_per_100k": 0.590306664064404,
+        "average_reports_per_active_year": 38.94444444444444,
+        "average_population_active_years": 6009260.736111111,
+        "active_start_year": 1953,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "KY",
+        "state_name": "Kentucky",
+        "active_years": 71,
+        "reports": 1755,
+        "average_annual_sightings_per_100k": 0.5838842489235532,
+        "average_reports_per_active_year": 24.718309859154928,
+        "average_population_active_years": 3751318.4788732394,
+        "active_start_year": 1943,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "IN",
+        "state_name": "Indiana",
+        "active_years": 75,
+        "reports": 2797,
+        "average_annual_sightings_per_100k": 0.5833346139134327,
+        "average_reports_per_active_year": 37.29333333333334,
+        "average_population_active_years": 5581489.773333333,
+        "active_start_year": 1920,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "NC",
+        "state_name": "North Carolina",
+        "active_years": 71,
+        "reports": 3796,
+        "average_annual_sightings_per_100k": 0.5778010063993751,
+        "average_reports_per_active_year": 53.46478873239437,
+        "average_population_active_years": 7008170.830985916,
+        "active_start_year": 1860,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "TN",
+        "state_name": "Tennessee",
+        "active_years": 67,
+        "reports": 2388,
+        "average_annual_sightings_per_100k": 0.5712015785842268,
+        "average_reports_per_active_year": 35.64179104477612,
+        "average_population_active_years": 5111029.104477612,
+        "active_start_year": 1940,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "MN",
+        "state_name": "Minnesota",
+        "active_years": 75,
+        "reports": 2202,
+        "average_annual_sightings_per_100k": 0.5603657174070219,
+        "average_reports_per_active_year": 29.36,
+        "average_population_active_years": 4358242.72,
+        "active_start_year": 1932,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "CA",
+        "state_name": "California",
+        "active_years": 87,
+        "reports": 16652,
+        "average_annual_sightings_per_100k": 0.5422338262916258,
+        "average_reports_per_active_year": 191.4022988505747,
+        "average_population_active_years": 24557733.36781609,
+        "active_start_year": 1918,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "PA",
+        "state_name": "Pennsylvania",
+        "active_years": 78,
+        "reports": 5196,
+        "average_annual_sightings_per_100k": 0.5274323855428462,
+        "average_reports_per_active_year": 66.61538461538461,
+        "average_population_active_years": 11886061.0,
+        "active_start_year": 1917,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "OH",
+        "state_name": "Ohio",
+        "active_years": 76,
+        "reports": 4569,
+        "average_annual_sightings_per_100k": 0.5233718910710287,
+        "average_reports_per_active_year": 60.11842105263158,
+        "average_population_active_years": 10709106.355263159,
+        "active_start_year": 1947,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "MI",
+        "state_name": "Michigan",
+        "active_years": 74,
+        "reports": 3776,
+        "average_annual_sightings_per_100k": 0.5173727133272373,
+        "average_reports_per_active_year": 51.027027027027025,
+        "average_population_active_years": 9057314.027027028,
+        "active_start_year": 1936,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "VA",
+        "state_name": "Virginia",
+        "active_years": 69,
+        "reports": 2781,
+        "average_annual_sightings_per_100k": 0.5159415898475004,
+        "average_reports_per_active_year": 40.30434782608695,
+        "average_population_active_years": 6231467.391304348,
+        "active_start_year": 1945,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "IL",
+        "state_name": "Illinois",
+        "active_years": 74,
+        "reports": 4395,
+        "average_annual_sightings_per_100k": 0.4727977180050358,
+        "average_reports_per_active_year": 59.391891891891895,
+        "average_population_active_years": 11477871.0,
+        "active_start_year": 1925,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "NJ",
+        "state_name": "New Jersey",
+        "active_years": 74,
+        "reports": 3004,
+        "average_annual_sightings_per_100k": 0.4679864528068525,
+        "average_reports_per_active_year": 40.5945945945946,
+        "average_population_active_years": 7628145.6486486485,
+        "active_start_year": 1930,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "MD",
+        "state_name": "Maryland",
+        "active_years": 73,
+        "reports": 1932,
+        "average_annual_sightings_per_100k": 0.4678394784428167,
+        "average_reports_per_active_year": 26.465753424657535,
+        "average_population_active_years": 4576409.082191781,
+        "active_start_year": 1946,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "AL",
+        "state_name": "Alabama",
+        "active_years": 67,
+        "reports": 1454,
+        "average_annual_sightings_per_100k": 0.46485362824028387,
+        "average_reports_per_active_year": 21.70149253731343,
+        "average_population_active_years": 4102080.970149254,
+        "active_start_year": 1939,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "MS",
+        "state_name": "Mississippi",
+        "active_years": 63,
+        "reports": 810,
+        "average_annual_sightings_per_100k": 0.4495675198219602,
+        "average_reports_per_active_year": 12.857142857142858,
+        "average_population_active_years": 2637170.3492063493,
+        "active_start_year": 1949,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "GA",
+        "state_name": "Georgia",
+        "active_years": 69,
+        "reports": 2821,
+        "average_annual_sightings_per_100k": 0.44259062349324274,
+        "average_reports_per_active_year": 40.88405797101449,
+        "average_population_active_years": 6995847.739130435,
+        "active_start_year": 1942,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "NY",
+        "state_name": "New York",
+        "active_years": 81,
+        "reports": 6135,
+        "average_annual_sightings_per_100k": 0.39737517763545716,
+        "average_reports_per_active_year": 75.74074074074075,
+        "average_population_active_years": 17620633.97530864,
+        "active_start_year": 1790,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "LA",
+        "state_name": "Louisiana",
+        "active_years": 71,
+        "reports": 1189,
+        "average_annual_sightings_per_100k": 0.37402174148391026,
+        "average_reports_per_active_year": 16.746478873239436,
+        "average_population_active_years": 4058203.8732394367,
+        "active_start_year": 1943,
+        "active_end_year": 2024
+      },
+      {
+        "state_code": "TX",
+        "state_name": "Texas",
+        "active_years": 80,
+        "reports": 6440,
+        "average_annual_sightings_per_100k": 0.3475345386977603,
+        "average_reports_per_active_year": 80.5,
+        "average_population_active_years": 16763125.475,
+        "active_start_year": 1910,
+        "active_end_year": 2024
+      }
+    ]
+  }
+}

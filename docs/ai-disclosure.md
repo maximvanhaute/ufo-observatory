@@ -11,7 +11,9 @@ We retain the [original asset prompts](asset-prompts.md), our [data preparation 
 
 ## What we checked
 
-We used automated reconciliation to compare all supplied IDs, links, summaries, cities, media labels, and raw occurrence dates with the generated app records. We checked chart totals, time exclusions, map coverage, and date resolution. Our 12 regression tests cover the data engine and loader. We also inspected selected desktop and mobile browser flows, including filters, report details, original links, and pagination.
+We used automated reconciliation to compare all supplied IDs, links, summaries, cities, media labels, and raw occurrence dates with the generated app records. We checked chart totals, time exclusions, map coverage, and date resolution. Our current suite has 27 JavaScript checks and two Python importer checks. We also inspected selected desktop and mobile browser flows, including filters, report details, original links, and pagination.
+
+Following our group’s query feedback on 8 November, Codex assisted with an independent raw-export reproduction of every hourly bucket and every state average. Our first all-years implementation used a population-weighted rate and zero-report years. We replaced it with the group’s arithmetic mean of annual rates over active years, documented that definition, and retained the active-year counts. These were explicit choices based on group feedback, rather than a model deciding which average our project should use.
 
 These checks were themselves assisted by code and tools. We distinguish a complete automated field reconciliation from a sampled browser check; we do not claim that a person manually reviewed every report or every possible filter combination.
 

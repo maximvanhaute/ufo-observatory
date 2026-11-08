@@ -4,7 +4,7 @@ import {renderStateMap, renderHourly, renderShapeBars, renderHeatmap, renderTime
 import {reportCard, reportDetail, aboutContent} from './content.js';
 import {loadReportPartitions} from './data-loader.js';
 import {initSoundControls} from './sound.js';
-import {comparePopulation, populationPeriod, populationToCsv, validatePopulation} from './population-engine.js';
+import {comparePopulation, populationYearFromParam, populationReportFilters, populationToCsv, validatePopulation} from './population-engine.js';
 import {renderPopulation} from './population-view.js';
 
 const $ = id => document.getElementById(id);
@@ -12,7 +12,7 @@ const VIEWS=['explore','patterns','reports','about'];
 const PAGE_SIZE=10;
 let allReports=[],geometry,manifest,summaries,facts=[],filters={...DEFAULT_FILTERS},view='explore',page=1,sort='newest',filtered=[],stats,factIndex=0,currentReport=null;
 let toastTimer,searchTimer,resizeTimer,filterReturnFocus;
-let population, populationComparison, patternsTab='time', populationYear=2024, populationMode='rate';
+let population, populationComparison, patternsTab='time', populationYear='all', populationMode='rate';
 
 function showToast(message){clearTimeout(toastTimer);$('toast').textContent=message;$('toast').hidden=false;toastTimer=setTimeout(()=>$('toast').hidden=true,2700);}
 function populateSelect(element,items,allLabel){element.innerHTML=`<option value="">${e(allLabel)}</option>`+items.map(item=>`<option value="${e(item.value)}">${e(item.label)}</option>`).join('');}
@@ -32,7 +32,7 @@ function initControls(){
   for (const button of document.querySelectorAll('[data-population-mode]')) {
     button.addEventListener('click', () => {populationMode=button.dataset.populationMode;writeUrl();renderCharts();});
   }
-  $('population-read-reports').addEventListener('click', ()=>navigate('reports'));
+  $('population-read-reports').addEventListener('click', ()=>{filters=populationReportFilters(filters,populationYear);navigate('reports');});
   populateSelect($('country-filter'),globalStats.countries.map(c=>({value:c.key,label:`${c.name} (${number(c.count)})`})),'All countries / areas');
   populateSelect($('state-filter'),[...manifest.us_states].sort((a,b)=>a.state_name.localeCompare(b.state_name)).map(s=>({value:s.state_code,label:s.state_name})),'All US states');
   populateSelect($('from-filter'),manifest.years.map(y=>({value:y,label:y})),'Any');
@@ -47,7 +47,7 @@ function initControls(){
   $('shape-chips').addEventListener('click',event=>{const button=event.target.closest('[data-shape]');if(button)toggleShape(button.dataset.shape);});
   for(const id of ['clear-filters','reset-sidebar'])$(id).addEventListener('click',()=>resetFilters());
   $('active-filters').addEventListener('click',event=>{const chip=event.target.closest('[data-clear]');if(chip)setFilter(chip.dataset.clear,'');});
-  $('filter-results').addEventListener('click',()=>{closeFilters();navigate('reports');});
+  $('filter-results').addEventListener('click',()=>{if(view==='patterns'&&patternsTab==='population')filters=populationReportFilters(filters,populationYear);closeFilters();navigate('reports');});
   $('open-filters').addEventListener('click',openFilters);
   $('close-filters').addEventListener('click',closeFilters);
   $('filter-scrim').addEventListener('click',closeFilters);
@@ -93,11 +93,7 @@ function readUrl(){
   if(!['','yes','no','not_provided'].includes(filters.media))filters.media='';
   patternsTab=params.get('pattern')==='population'?'population':'time';
   populationMode=params.get('population_mode')==='count'?'count':'rate';
-  const requestedYear=Number(params.get('population_year'));
-  populationYear=params.get('population_year')==='all'?'all':manifest.years.includes(requestedYear)?requestedYear:population.metadata.max_year;
-  if(view==='patterns'&&patternsTab==='population') {
-    applyPopulationPeriod();
-  }
+  populationYear=populationYearFromParam(params.get('population_year'),manifest.years);
 }
 
 function writeUrl(push=false){
@@ -123,17 +119,12 @@ function toggleShape(key){setFilter('shape',filters.shape===key?'':key);}
 function toggleHour(hour){setFilter('hour',filters.hour!==''&&Number(filters.hour)===hour?'':String(hour));}
 function toggleCell(month,hour){const same=Number(filters.month)===month&&filters.hour!==''&&Number(filters.hour)===hour;filters.month=same?'':String(month);filters.hour=same?'':String(hour);page=1;writeUrl();render();}
 function toggleYear(year){const same=Number(filters.from)===year&&Number(filters.to)===year;filters.from=same?'':String(year);filters.to=same?'':String(year);page=1;writeUrl();render();}
-function resetFilters(){filters={...DEFAULT_FILTERS,country:''};if(view==='patterns'&&patternsTab==='population')applyPopulationPeriod();page=1;writeUrl();render();}
-function navigate(next){if(!VIEWS.includes(next))return;closeFilters();view=next;if(view==='patterns'&&patternsTab==='population')applyPopulationPeriod();page=1;writeUrl(true);render();window.scrollTo({top:0,behavior:'instant'});document.title=`UFO Observatory — ${next==='about'?'About the data':next[0].toUpperCase()+next.slice(1)}`;}
-
-function applyPopulationPeriod(){
-  const period=populationPeriod(allReports,population,populationYear);
-  filters.from=String(period.startYear);filters.to=String(period.endYear);
-}
+function resetFilters(){filters={...DEFAULT_FILTERS,country:''};if(view==='patterns'&&patternsTab==='population')populationYear='all';page=1;writeUrl();render();}
+function navigate(next){if(!VIEWS.includes(next))return;closeFilters();view=next;page=1;writeUrl(true);render();window.scrollTo({top:0,behavior:'instant'});document.title=`UFO Observatory — ${next==='about'?'About the data':next[0].toUpperCase()+next.slice(1)}`;}
 
 function selectPopulationYear(year){
   if(year!=='all'&&!manifest.years.includes(year))return;
-  populationYear=year;applyPopulationPeriod();page=1;writeUrl(true);render();
+  populationYear=year;page=1;writeUrl(true);render();
 }
 function selectPopulationState(code){
   setFilter('state',filters.state===code?'':code);
@@ -141,10 +132,10 @@ function selectPopulationState(code){
 }
 
 function render(){
-  hideTooltip();filtered=filterReports(allReports,filters);stats=aggregateReports(filtered);
+  const isPopulation=view==='patterns'&&patternsTab==='population';
+  hideTooltip();filtered=filterReports(allReports,isPopulation?populationReportFilters(filters,populationYear):filters,{includeFlaggedDates:isPopulation});stats=aggregateReports(filtered);
   document.body.dataset.view=view;
   const headings={explore:['THE SIGHTING EXPLORER','Follow your curiosity.','What’s <span>out there?</span>','Explore the stories people report in our skies.'],patterns:['THE PATTERN LAB','Make the connections.','Strange skies.<span> Clear patterns.</span>','Explore when, where and how sightings are described.'],reports:['THE REPORT ROOM','Every report has a story.','Look closer.<span> Read the stories.</span>','Explore the original summaries behind the data.'],about:['BEHIND THE OBSERVATORY','Good questions. Careful data.','Stay curious.<span> Think critically.</span>','The sources, cleaning decisions and limits behind the visuals.']};
-  const isPopulation=view==='patterns'&&patternsTab==='population';
   if(isPopulation)headings.patterns=['THE POPULATION LAB','A different view of the same sky.','More people.<span> More sightings?</span>','Compare report counts with reports per 100,000 residents.'];
   $('metric-grid').hidden=isPopulation;
   $('pattern-time-panel').hidden=patternsTab!=='time';
@@ -176,7 +167,7 @@ function syncControls(){
 function renderSelection(){
   const country=manifest.countries.find(c=>c.country_key===filters.country)?.country_name||'All countries / areas';
   const shape=manifest.shapes.find(s=>s.shape_key===filters.shape)?.shape_name||'all shapes';
-  const year=filters.from||filters.to?`${filters.from||'any year'} – ${filters.to||'any year'}`:'all years';
+  const year=view==='patterns'&&patternsTab==='population'?(populationYear==='all'?'all years':String(populationYear)):filters.from||filters.to?`${filters.from||'any year'} – ${filters.to||'any year'}`:'all years';
   $('selection-description').textContent=`${country} · ${year} · ${shape}`;
   const chips=[];
   if(filters.state)chips.push(['state',manifest.us_states.find(s=>s.state_code===filters.state)?.state_name||filters.state]);
@@ -201,7 +192,7 @@ function renderCharts(){
     renderStateMap($('state-map'),geometry,stats,filters,code=>setFilter('state',filters.state===code?'':code),country=>setFilter('country',country));
     renderHourly($('explore-hourly'),stats,filters,toggleHour);
     renderShapeBars($('explore-shapes'),stats,filters,toggleShape,6,true);
-    $('hourly-denominator').textContent=`Based on ${number(stats.validTime)} usable occurrence times${stats.invalidTime?`; ${stats.invalidTime} missing or flagged excluded`:''}.`;
+    $('hourly-denominator').textContent=`Based on ${number(stats.validHours)} valid TimeOnly values${stats.invalidHours?`; ${number(stats.invalidHours)} missing or invalid times excluded`:''}. Valid clock times remain included when their calendar date is flagged.`;
     $('map-coverage').textContent=stats.usReports?`${number(stats.mapped)} of ${number(stats.usReports)} US reports mapped${stats.unmapped?` · ${stats.unmapped} outside map coverage`:''}. Counts are sample reports.`:'US map · select United States to explore state counts.';
   }else if(view==='patterns'){
     if(patternsTab==='population'){

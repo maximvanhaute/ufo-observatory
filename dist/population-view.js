@@ -17,10 +17,11 @@ function svgNode(tag, attributes = {}, text) {
 
 function describe(row) {
   if (row.isAverage) {
-    return row.name + '\n' + number(row.count) + ' reports compared · ' + mean(row.annualCount) + ' per year' +
-      '\n' + number(Math.round(row.population)) + ' average residents' +
-      '\n' + rate(row.rate) + ' reports per 100,000 per year' +
-      '\n' + row.coveredYears + ' covered years · ' + row.coverageStart + '–' + row.coverageEnd;
+    return row.name + '\n' + number(row.count) + ' reports compared · ' + mean(row.annualCount) + ' per active year' +
+      '\n' + number(Math.round(row.population)) + ' average residents in active years' +
+      '\n' + rate(row.rate) + ' average annual reports per 100,000' +
+      '\n' + row.activeYears + ' active years · ' + row.activeStart + '–' + row.activeEnd +
+      '\nYears with zero reports are not averaged';
   }
   return row.name + '\n' + number(row.count) + ' reports in ' + row.year +
     '\n' + number(row.population) + ' residents\n' + rate(row.rate) + ' reports per 100,000';
@@ -29,7 +30,7 @@ function describe(row) {
 function scatter(element, comparison, selectedState, onSelect) {
   element.replaceChildren();
   if (!comparison.rows.length) {
-    element.innerHTML = '<p class="population-empty">Population is unavailable for this year. Choose a year through 2024.</p>';
+    element.innerHTML = '<p class="population-empty">' + (comparison.isAverage ? 'No active state-years match this selection. Clear filters to compare annual averages.' : 'Population is unavailable for this year. Choose a year through 2024.') + '</p>';
     return;
   }
   const d3 = window.d3;
@@ -40,7 +41,7 @@ function scatter(element, comparison, selectedState, onSelect) {
   const maxCount = Math.max(d3.max(comparison.rows, displayedCount), maxPopulation * comparison.weightedRate / 100000, 1);
   const x = d3.scaleLinear().domain([0, maxPopulation * 1.05]).nice().range([margin.left, width - margin.right]);
   const y = d3.scaleLinear().domain([0, maxCount * 1.08]).nice().range([height - margin.bottom, margin.top]);
-  const svg = svgNode('svg', {viewBox: '0 0 ' + width + ' ' + height, class: 'population-scatter-svg', 'aria-label': comparison.isAverage ? 'Average state population versus average annual reports, ' + comparison.label : 'State population versus report count in ' + comparison.year});
+  const svg = svgNode('svg', {viewBox: '0 0 ' + width + ' ' + height, class: 'population-scatter-svg', 'aria-label': comparison.isAverage ? 'Average state population versus reports per active year, ' + comparison.label : 'State population versus report count in ' + comparison.year});
   for (const tick of y.ticks(4)) {
     svg.append(svgNode('line', {x1: margin.left, x2: width - margin.right, y1: y(tick), y2: y(tick), class: 'chart-grid'}));
     svg.append(svgNode('text', {x: margin.left - 9, y: y(tick) + 4, 'text-anchor': 'end'}, number(tick)));
@@ -52,8 +53,8 @@ function scatter(element, comparison, selectedState, onSelect) {
     x1: x(0), y1: y(0), x2: x(maxPopulation),
     y2: y(maxPopulation * comparison.weightedRate / 100000), class: 'population-reference',
   }));
-  svg.append(svgNode('text', {x: (margin.left + width - margin.right) / 2, y: height - 8, 'text-anchor': 'middle'}, comparison.isAverage ? 'Average population (millions)' : 'Population (millions)'));
-  svg.append(svgNode('text', {transform: 'translate(14 ' + (height / 2) + ') rotate(-90)', 'text-anchor': 'middle'}, comparison.isAverage ? 'Average reports / year' : 'Reports in ' + comparison.year));
+  svg.append(svgNode('text', {x: (margin.left + width - margin.right) / 2, y: height - 8, 'text-anchor': 'middle'}, comparison.isAverage ? 'Mean population · active years (millions)' : 'Population (millions)'));
+  svg.append(svgNode('text', {transform: 'translate(14 ' + (height / 2) + ') rotate(-90)', 'text-anchor': 'middle'}, comparison.isAverage ? 'Reports / active year' : 'Reports in ' + comparison.year));
 
   const labelled = new Set([
     ...comparison.byCount.slice(0, 3).map(row => row.code),
@@ -92,7 +93,7 @@ function ranking(element, comparison, selectedState, mode, onSelect) {
       '<span class="population-rank-number">' + (index + 1) + '</span><span class="population-rank-name">' + e(row.name) +
       '</span><span class="population-rank-track" aria-hidden="true"><span style="width:' + (100 * value / max) +
       '%"></span></span><strong>' + (mode === 'count' ? countText(row) : rate(value)) + '</strong></button>';
-  }).join('') : '<p class="population-empty">Choose a year with population data to compare states.</p>';
+  }).join('') : '<p class="population-empty">No comparable state-years. Try another period or clear filters.</p>';
   for (const button of element.querySelectorAll('button')) {
     button.addEventListener('click', () => onSelect(button.dataset.populationState));
   }
@@ -101,21 +102,21 @@ function ranking(element, comparison, selectedState, mode, onSelect) {
 
 export function renderPopulation(comparison, geometry, selectedState, mode, onSelect) {
   hideTooltip();
-  $('population-period').textContent = comparison.isAverage ? 'All years · ' + comparison.label + ' · annual averages over covered years' :
+  $('population-period').textContent = comparison.isAverage ? 'All years · equal-weight averages over years with reports and population' :
     'Occurrence year ' + comparison.year + ' · matching population year';
   $('population-count').textContent = number(comparison.matchedReports);
-  $('population-match-note').textContent = number(comparison.excludedReports) + ' reports outside population coverage';
+  $('population-match-note').textContent = 'of ' + number(comparison.totalReports) + ' reports · ' + number(comparison.excludedReports) + ' without population matches';
   $('population-coverage').textContent = comparison.rows.length + ' / ' + comparison.allStates.length;
   const hasDC = comparison.rows.some(row => row.code === 'DC');
   $('population-coverage-caption').textContent = comparison.rows.length ?
-    (comparison.rows.length - Number(hasDC)) + ' states' + (hasDC ? ' + DC' : '') : 'No populations for this year';
+    (comparison.rows.length - Number(hasDC)) + ' states' + (hasDC ? ' + DC' : '') : comparison.isAverage ? 'No active state-years' : 'No populations for this year';
   $('population-volume-leader').textContent = comparison.matchedReports ? comparison.byCount[0].name : '—';
   $('population-volume-label').textContent = comparison.isAverage ? 'Highest annual average' : 'Most reports';
-  $('population-volume-value').textContent = comparison.matchedReports ? countText(comparison.byCount[0]) + (comparison.isAverage ? ' reports / year' : ' reports') : 'no matching reports';
+  $('population-volume-value').textContent = comparison.matchedReports ? countText(comparison.byCount[0]) + (comparison.isAverage ? ' reports / active year' : ' reports') : 'no matching reports';
   $('population-rate-leader').textContent = comparison.matchedReports ? comparison.byRate[0].name : '—';
   $('population-rate-value').textContent = comparison.matchedReports ? rate(comparison.byRate[0].rate) + (comparison.isAverage ? ' per 100k / year' : ' per 100k') : 'no matching reports';
-  $('population-rank-unit').textContent = mode === 'count' ? (comparison.isAverage ? 'Average annual reports over covered years' : 'Reports in ' + comparison.year) :
-    comparison.isAverage ? 'Average annual reports per 100,000 residents' : 'Reports per 100,000 residents';
+  $('population-rank-unit').textContent = mode === 'count' ? (comparison.isAverage ? 'Average reports per active year' : 'Reports in ' + comparison.year) :
+    comparison.isAverage ? 'Mean annual rate · years with reports only' : 'Reports per 100,000 residents';
   for (const button of document.querySelectorAll('[data-population-mode]')) {
     button.setAttribute('aria-pressed', String(button.dataset.populationMode === mode));
     button.textContent = button.dataset.populationMode === 'count' ? (comparison.isAverage ? 'Reports / year' : 'Total reports') :
@@ -130,18 +131,19 @@ export function renderPopulation(comparison, geometry, selectedState, mode, onSe
       values: new Map(comparison.rows.map(row => [row.code, mode === 'count' ? displayedCount(row) : row.rate])),
       label: mode === 'count' ? (comparison.isAverage ? 'Map of average annual reports by state' : 'Map of report counts by state') :
         comparison.isAverage ? 'Map of average annual reports per 100,000 residents' : 'Map of reports per 100,000 residents',
-      tooltip: code => rowMap.has(code) ? describe(rowMap.get(code)) : 'Population unavailable for this state in ' + comparison.label,
+      tooltip: code => rowMap.has(code) ? describe(rowMap.get(code)) : comparison.inactiveStates.some(row => row.code === code) ? 'No active years for this state in the selection. The annual average is unavailable.' : 'Population unavailable for this state in ' + comparison.label,
     });
   $('population-map-unit').textContent = mode === 'count' ? (comparison.isAverage ? 'Shading shows average annual reports' : 'Shading shows report counts') :
     comparison.isAverage ? 'Shading shows average annual reports per 100,000 residents' : 'Shading shows reports per 100,000 residents';
   const missing = comparison.missingStates.map(row => row.name).join(', ');
   const coverage = comparison.rows.length ? (missing ? 'Population unavailable for ' + missing + ' in ' + comparison.label + '. ' : '') :
-    'Population is unavailable for ' + comparison.label + '. The supplied population file ends in 2024. ';
-  const partial = comparison.partialStates.map(row => row.name + ' (' + row.coveredYears + ' of ' + comparison.yearCount + ' years, ' + row.coverageStart + '–' + row.coverageEnd + ')').join(', ');
+    'No comparable state-years in this selection. The supplied population file ends in 2024. ';
+  const inactive = comparison.inactiveStates.map(row => row.name).join(', ');
   $('population-coverage-note').textContent = coverage +
-    number(comparison.excludedReports) + ' reports excluded from this comparison. Gray states have no population match. ' +
-    (comparison.isAverage ? number(comparison.outsidePeriodReports) + ' later reports are outside the population period. ' : '') +
-    (partial ? 'Shorter coverage for ' + partial + '. ' : '') +
+    number(comparison.excludedReports) + ' of ' + number(comparison.totalReports) + ' reports have no population match. ' +
+    (comparison.isAverage ? 'This includes ' + number(comparison.outsidePeriodReports) + ' reports after ' + comparison.endYear + ', when population data ends. Rates average only active years; coverage differs by state. ' : '') +
+    (inactive ? 'No years with both reports and population for ' + inactive + '. ' : '') +
+    'Gray states have no population match or no active years. ' +
     'All states are compared; a selected state is highlighted. Shape, month, hour, media and search filters affect report counts.';
   $('population-insight').textContent = comparison.matchedReports ?
     comparison.byCount[0].name + (comparison.isAverage ? ' leads on annual average reports. ' : ' leads on volume. ') + comparison.byRate[0].name + ' leads per resident in this selection.' :
@@ -152,11 +154,11 @@ export function renderPopulation(comparison, geometry, selectedState, mode, onSe
   if (selected) {
     $('population-selected-title').textContent = selected.name + ' · ' + comparison.label;
     $('population-selected-values').textContent = comparison.isAverage ?
-      number(selected.totalReports) + ' state reports in the period · ' +
-      (selected.population === null ? 'population unavailable' :
-        number(selected.count) + ' compared · ' + mean(selected.annualCount) + ' average reports / year · ' +
-        number(Math.round(selected.population)) + ' average residents · ' + rate(selected.rate) + ' per 100,000 / year · ' +
-        selected.coveredYears + ' covered years (' + selected.coverageStart + '–' + selected.coverageEnd + ')') :
+      number(selected.totalReports) + ' state reports across all years · ' +
+      (!selected.populationAvailable ? 'population unavailable' : selected.rate === null ? 'no active years in this selection' :
+        number(selected.count) + ' compared · ' + mean(selected.annualCount) + ' average reports / active year · ' +
+        number(Math.round(selected.population)) + ' average residents in active years · ' + rate(selected.rate) + ' mean annual reports per 100,000 · ' +
+        selected.activeYears + ' active years (' + selected.activeStart + '–' + selected.activeEnd + ')') :
       number(selected.count) + ' reports · ' + (selected.population === null ? 'population unavailable' : number(selected.population) + ' residents · ' + rate(selected.rate) + ' reports per 100,000');
   }
 }

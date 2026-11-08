@@ -104,17 +104,18 @@ def build(input_path,reference_path,population_path=None):
             explanation_category=None,explanation_certainty='not_provided',has_source_explanation=False,quality_flags=flags,
             reported_date=reported,source_occurrence_date_raw=occurrence_raw,source_occurrence_time_raw=time,source_reported_date_raw=x['Reported Date']))
         if population:
-            value=pop_lookup.get((code,dt.year)) if usable else None
-            records[-1].update(state_population=value,population_year=dt.year if usable else None,
-                population_status='matched' if value else 'state_year_unavailable' if usable else 'date_flagged')
+            value=pop_lookup.get((code,dt.year))
+            records[-1].update(state_population=value,population_year=dt.year,
+                population_status='matched' if value else 'state_year_unavailable')
     temporal=[r for r in records if r['eligible_for_time_analysis']];mapped=[r for r in records if r['eligible_for_us_state_map']]
     def counts(keys,rows=records):
         c=collections.Counter(tuple(r[k] for k in keys) for r in rows)
         return [{**dict(zip(keys,key)),'report_count':n} for key,n in c.items()]
     state_counts=collections.Counter(r['state_code'] for r in mapped)
-    hours=collections.Counter(r['hour'] for r in temporal);heat=collections.Counter((r['month'],r['hour']) for r in temporal)
+    hours=collections.Counter(int(r['source_occurrence_time_raw'].split(':')[0]) for r in records);heat=collections.Counter((r['month'],r['hour']) for r in temporal)
     quality=dict(raw_rows=len(incoming),empty_records_removed=0,duplicate_copies_removed=0,clean_reports=len(records),
         valid_time_reports=len(temporal),reports_excluded_from_time_charts=len(records)-len(temporal),
+        valid_hour_reports=len(records),reports_excluded_from_hour_charts=0,
         datetime_status_counts=dict(collections.Counter(r['datetime_status'] for r in records)),us_reports=len(records),
         reports_mapped_to_us_states=len(mapped),us_reports_not_mapped=len(records)-len(mapped),
         us_reports_not_mapped_by_reason={'outside_map_scope':len(records)-len(mapped)},
@@ -126,7 +127,7 @@ def build(input_path,reference_path,population_path=None):
         upstream_raw_rows_reported=159485,upstream_rows_removed_reported=19582,
         upstream_count_note='Group notes describe an earlier export. Current input rows are independently reconciled without reconstructing earlier removals.',
         occurrence_date_order_counts=dict(orders),reported_date_order_counts=dict(reported_orders))
-    summaries=dict(scope='All retained Fabric export reports. Time charts exclude flagged years; state map covers 50 states plus DC.',quality=quality,
+    summaries=dict(scope='All retained Fabric export reports. Hourly counts use valid source clock times independently of date flags. Calendar charts exclude flagged years; state map covers 50 states plus DC.',quality=quality,
         by_year=sorted(counts(['year'],temporal),key=lambda r:r['year']),by_shape=sorted(counts(['shape_key','shape_name']),key=lambda r:-r['report_count']),
         by_country=counts(['country_key','country_name']),by_us_state=[{**s,'report_count':state_counts[k]} for k,s in states.items()],
         by_hour=[{'hour':h,'report_count':hours[h]} for h in range(24)],month_hour_heatmap=[{'month':m,'hour':h,'report_count':heat[m,h]} for m in range(1,13) for h in range(24)])
