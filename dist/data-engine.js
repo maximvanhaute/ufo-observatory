@@ -12,8 +12,7 @@ export function recordedHour(report) {
   return Number.isInteger(report.hour) && report.hour >= 0 && report.hour < 24 ? report.hour : null;
 }
 
-// Date_Fixed is MDY. Preserve the pre-1900 flag for calendar charts, while allowing
-// the population comparison to reproduce the supplied SQL's valid-date policy.
+// The adapter validates Date_Fixed as MDY. Prefer its parsed calendar fields.
 export function recordedDate(report) {
   if (report.eligible_for_time_analysis && Number.isInteger(report.year)) {
     return {year:report.year, month:report.month, day:report.day};

@@ -1,6 +1,13 @@
 # Verification record
 
-## Query reconciliation and all-years default — 8 November 2026
+## Presentation alignment and historical cutoff — 9 November 2026
+
+We matched the About page’s cleaning stages to the final presentation. The group reports 159,538 original rows, 140,746 US rows, 139,903 after Excel, and 139,887 after Spark SQL. The final Fabric export includes 15 pre-1900 reports. The site excludes them during preparation and publishes 139,872 reports, with occurrence dates from 6 July 1905 to 6 March 2026.
+
+We recomputed the hourly and population figures from the original exports with the same cutoff. The hourly chart uses 139,872 times. The map includes 139,656 reports. The all-years population comparison matches 135,472 reports, with 4,400 missing population matches. Vermont remains first at 1.94 per 100,000. The 2024 comparison still matches 3,370 reports. The matching SQL and reconciliation record apply the same cutoff.
+
+
+## Query reconciliation and all-years default — 8 November 2026 (before the historical cutoff)
 
 We reproduced the group's hourly and average-per-capita queries independently from the two original JSON exports with `scripts/reconcile_fabric_queries.py`. We preserved raw-file SHA-256 values, all 24 hourly totals, every state rate, and active-year counts in [feedback-reconciliation.json](feedback-reconciliation.json). This is an export-based reproduction, not a live Fabric SQL execution. We use explicit MDY parsing of Date_Fixed and provide [matching SQL](reconciliation-queries.sql), including the app's existing DC abbreviation repair.
 

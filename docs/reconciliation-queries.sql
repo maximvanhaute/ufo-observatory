@@ -1,15 +1,16 @@
--- Reconciliation with the app, 8 November 2026.
+-- Reconciliation with the app, 9 November 2026.
 -- Run against the same snapshot as Final File Swear on god for now!.json.
 -- Date_Fixed is MDY. Style 110 makes that explicit after slash normalization:
 -- https://learn.microsoft.com/en-us/sql/t-sql/functions/cast-and-convert-transact-sql
 -- These queries have been reproduced against the exported files; we have not
 -- executed them against the live Lakehouse in this update.
 
--- 1. Hourly chart. A flagged calendar year does not invalidate TimeOnly.
+-- 1. Hourly chart. Apply the same occurrence-date cutoff as the app.
 SELECT DATEPART(hour, TRY_CAST(TimeOnly AS TIME)) AS Hour_of_Day,
        COUNT(ID) AS Observation_Count
 FROM ufo_sighting
 WHERE TRY_CAST(TimeOnly AS TIME) IS NOT NULL
+  AND TRY_CONVERT(DATE, REPLACE(Date_Fixed, '/', '-'), 110) >= '19000101'
 GROUP BY DATEPART(hour, TRY_CAST(TimeOnly AS TIME))
 ORDER BY Hour_of_Day;
 
@@ -25,7 +26,7 @@ WITH Parsed_Sightings AS (
 ), Yearly_Sightings AS (
     SELECT State_Abbreviation, Sighting_Year, COUNT(ID) AS Total_Sightings
     FROM Parsed_Sightings
-    WHERE Sighting_Year IS NOT NULL
+    WHERE Sighting_Year >= 1900
     GROUP BY State_Abbreviation, Sighting_Year
 ), Population_Normalized AS (
     SELECT COALESCE(NULLIF(UPPER(state_abbr), ''),

@@ -192,7 +192,7 @@ function renderCharts(){
     renderStateMap($('state-map'),geometry,stats,filters,code=>setFilter('state',filters.state===code?'':code),country=>setFilter('country',country));
     renderHourly($('explore-hourly'),stats,filters,toggleHour);
     renderShapeBars($('explore-shapes'),stats,filters,toggleShape,6,true);
-    $('hourly-denominator').textContent=`Based on ${number(stats.validHours)} valid TimeOnly values${stats.invalidHours?`; ${number(stats.invalidHours)} missing or invalid times excluded`:''}. Valid clock times remain included when their calendar date is flagged.`;
+    $('hourly-denominator').textContent=`Based on ${number(stats.validHours)} valid TimeOnly values${stats.invalidHours?`; ${number(stats.invalidHours)} missing or invalid times excluded`:''}.`;
     $('map-coverage').textContent=stats.usReports?`${number(stats.mapped)} of ${number(stats.usReports)} US reports mapped${stats.unmapped?` · ${stats.unmapped} outside map coverage`:''}. Counts are sample reports.`:'US map · select United States to explore state counts.';
   }else if(view==='patterns'){
     if(patternsTab==='population'){

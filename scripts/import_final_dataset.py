@@ -57,6 +57,7 @@ def build(input_path,reference_path,population_path=None):
     reference={} if corrected else json.loads(gzip.decompress(reference_path.read_bytes()))
     population,pop_lookup=population_dimension(population_path,states) if population_path else (None,{})
     records=[];orders=collections.Counter(); reported_orders=collections.Counter();ids=set()
+    pre_1900_removed = 0
     for original in incoming:
         if corrected:
             time_field='TimeOnly' if 'TimeOnly' in original else 'Only_Time'
@@ -74,6 +75,10 @@ def build(input_path,reference_path,population_path=None):
             time=x['Time'];occurrence_raw=x['Date']
         identity=str(x['ID']);assert identity.isdigit() and identity not in ids
         ids.add(identity);assert x['Article Link']==f'https://nuforc.org/sighting/?id={identity}'
+        dt=datetime.datetime.fromisoformat(occurrence+'T'+time)
+        if dt.year < 1900:
+            pre_1900_removed += 1
+            continue
         orders[order]+=1
         if corrected:
             reported=fixed_date(x['Reported Date']);reported_order='ReportedDate_mdy'
@@ -81,8 +86,7 @@ def build(input_path,reference_path,population_path=None):
             reported,reported_order=date(x['Reported Date'],reference[identity][1])
         reported_orders[reported_order]+=1
         flags=[]
-        dt=datetime.datetime.fromisoformat(occurrence+'T'+time)
-        usable=1900<=dt.year<=datetime.date.today().year
+        usable=dt.year<=datetime.date.today().year
         if not usable: flags.append('suspicious_year')
         code=x['State'].strip().upper();state=states.get(code);mapped=state is not None
         if not mapped:flags.append('outside_map_scope')
@@ -114,6 +118,7 @@ def build(input_path,reference_path,population_path=None):
     state_counts=collections.Counter(r['state_code'] for r in mapped)
     hours=collections.Counter(int(r['source_occurrence_time_raw'].split(':')[0]) for r in records);heat=collections.Counter((r['month'],r['hour']) for r in temporal)
     quality=dict(raw_rows=len(incoming),empty_records_removed=0,duplicate_copies_removed=0,clean_reports=len(records),
+        pre_1900_reports_removed=pre_1900_removed,
         valid_time_reports=len(temporal),reports_excluded_from_time_charts=len(records)-len(temporal),
         valid_hour_reports=len(records),reports_excluded_from_hour_charts=0,
         datetime_status_counts=dict(collections.Counter(r['datetime_status'] for r in records)),us_reports=len(records),
@@ -124,10 +129,11 @@ def build(input_path,reference_path,population_path=None):
         media_status_counts=dict(collections.Counter(r['media_status'] for r in records)),reports_with_source_explanation=0,
         earliest_valid_occurrence=min(r['occurred_at_local'] for r in temporal),latest_valid_occurrence=max(r['occurred_at_local'] for r in temporal),
         source_sha256=hashlib.sha256(raw).hexdigest(),minimum_project_year=1900,
-        upstream_raw_rows_reported=159485,upstream_rows_removed_reported=19582,
-        upstream_count_note='Group notes describe an earlier export. Current input rows are independently reconciled without reconstructing earlier removals.',
+        upstream_raw_rows_reported=159538,upstream_us_rows_reported=140746,upstream_excel_rows_reported=139903,
+        upstream_duplicates_removed_reported=16,
+        upstream_count_note='Upstream totals come from the group presentation. The app cutoff and retained totals are verified against the supplied Fabric export.',
         occurrence_date_order_counts=dict(orders),reported_date_order_counts=dict(reported_orders))
-    summaries=dict(scope='All retained Fabric export reports. Hourly counts use valid source clock times independently of date flags. Calendar charts exclude flagged years; state map covers 50 states plus DC.',quality=quality,
+    summaries=dict(scope='Fabric export reports with occurrence years from 1900 onward. The state map covers 50 states plus DC.',quality=quality,
         by_year=sorted(counts(['year'],temporal),key=lambda r:r['year']),by_shape=sorted(counts(['shape_key','shape_name']),key=lambda r:-r['report_count']),
         by_country=counts(['country_key','country_name']),by_us_state=[{**s,'report_count':state_counts[k]} for k,s in states.items()],
         by_hour=[{'hour':h,'report_count':hours[h]} for h in range(24)],month_hour_heatmap=[{'month':m,'hour':h,'report_count':heat[m,h]} for m in range(1,13) for h in range(24)])
@@ -145,7 +151,7 @@ def build(input_path,reference_path,population_path=None):
         shapes=[{k:r[k] for k in ['shape_key','shape_name','shape_status']} for r in {r['shape_key']:r for r in records}.values()],
         years=sorted({r['year'] for r in temporal}),limitations=['US-only cleaned export; not the complete NUFORC archive.','Reports are self-reported observations, not verified extraterrestrial events.',
         'Occurrence dates use Date_Fixed and times use TimeOnly. Date, Time and Date_Corrected are ignored.' if corrected else 'Dates are resolved by original report ID against a pinned date reference. Raw export dates remain in each record.',
-        'Times are local wall-clock values; no timezones are supplied.','Duration and witness coordinates are absent. The explanation column was removed upstream.','Upstream cleaning totals are described by group notes, not independently rederived from the final export.','Reuse permission remains unresolved.'])
+        'Reports dated before 1900 are excluded from the app.','Times are local wall-clock values; no timezones are supplied.','Duration and witness coordinates are absent. The explanation column was removed upstream.','Upstream cleaning totals are reported in the group presentation.','Reuse permission remains unresolved.'])
     if population:
         manifest['population']=population['metadata']
         quality['population_match_counts']=dict(collections.Counter(r['population_status'] for r in records))
@@ -158,8 +164,8 @@ def build(input_path,reference_path,population_path=None):
         (DATA/name).write_bytes(gzip.compress(packed(records[start:start+10000]),compresslevel=9,mtime=0))
     save(DATA/'reports.json',dict(schema_version='partitioned-v1',total_reports=len(records),parts=names))
     save(DATA/'manifest.json',manifest);save(DATA/'summaries.json',summaries)
-    save(ROOT/'docs/dataset-import-checks.json',dict(input_rows=len(incoming),output_rows=len(records),unique_ids=len(ids),date_orders=dict(orders),reported_date_orders=dict(reported_orders),all_source_links_match_ids=True,quality=quality))
-    assert len(ids)==len(records)==len(incoming)
+    save(ROOT/'docs/dataset-import-checks.json',dict(input_rows=len(incoming),output_rows=len(records),unique_ids=len(records),pre_1900_reports_removed=pre_1900_removed,date_orders=dict(orders),reported_date_orders=dict(reported_orders),all_source_links_match_ids=True,quality=quality))
+    assert len(ids)==len(incoming)==len(records)+pre_1900_removed
     print(json.dumps(quality,indent=2))
 
 if __name__=='__main__':

@@ -8,14 +8,19 @@ const read=name=>JSON.parse(readFileSync(new URL(`../dist/data/${name}`,import.m
 const reports=await loadReportPartitions(read('reports.json'),name=>JSON.parse(gunzipSync(readFileSync(new URL(`../dist/data/${name}`,import.meta.url))))),quality=read('summaries.json').quality;
 
 test('the app counts reconcile with the Fabric quality export',()=>{const a=aggregateReports(reports);assert.equal(a.total,quality.clean_reports);assert.equal(a.validTime,quality.valid_time_reports);assert.equal(a.mapped,quality.reports_mapped_to_us_states);assert.equal(a.usReports,quality.us_reports);assert.equal(a.validHours,quality.valid_hour_reports);assert.equal(a.hours.reduce((n,r)=>n+r.count,0),a.validHours);assert.equal(a.heatmap.length,288);assert.equal(a.heatmap.reduce((n,r)=>n+r.count,0),a.validTime);assert.equal(a.shapes.reduce((n,r)=>n+r.count,0),a.total);});
-test('the default view shows all US reports and retains unmapped records',()=>{const a=aggregateReports(filterReports(reports,DEFAULT_FILTERS));assert.equal(a.total,139887);assert.equal(a.mapped,139671);assert.equal(a.unmapped,216);});
+test('the default view shows all US reports and retains unmapped records',()=>{const a=aggregateReports(filterReports(reports,DEFAULT_FILTERS));assert.equal(a.total,139872);assert.equal(a.mapped,139656);assert.equal(a.unmapped,216);});
 test('year, shape and state cross-filters agree with independent source selection',()=>{const f={...DEFAULT_FILTERS,state:'CA',shape:'triangle',from:'2023',to:'2023'};const actual=filterReports(reports,f);const expected=reports.filter(r=>r.country_key==='US'&&r.state_code==='CA'&&r.shape_key==='triangle'&&r.eligible_for_time_analysis&&r.year===2023);assert.deepEqual(actual,expected);});
 test('midnight and January do not disappear as falsy filters',()=>{const result=filterReports(reports,{...DEFAULT_FILTERS,country:'',hour:'0',month:'1'});assert.ok(result.length>0);assert.ok(result.every(r=>r.hour===0&&r.month===1));});
-test('time filtering excludes flagged dates without losing them from the full sample',()=>{const r=reports.find(r=>r.datetime_status==='suspicious_year');assert.ok(r);assert.equal(quality.reports_excluded_from_time_charts,15);assert.ok(filterReports(reports,{...DEFAULT_FILTERS,country:''}).includes(r));assert.ok(!filterReports(reports,{...DEFAULT_FILTERS,country:'',from:'1900'}).includes(r));assert.equal(formatOccurrence(r),'Date flagged for review');});
-test('explicit No media is preserved separately from missing media',()=>{const noMedia=filterReports(reports,{...DEFAULT_FILTERS,country:'',media:'no'});assert.equal(noMedia.length,133051);assert.ok(noMedia.every(r=>r.media_available===false));assert.equal(filterReports(reports,{...DEFAULT_FILTERS,country:'',media:'yes'}).length,6836);assert.equal(filterReports(reports,{...DEFAULT_FILTERS,country:'',shape:'unknown'}).length,25853);});
+test('the published snapshot excludes the 15 pre-1900 reports across all views',()=>{
+  assert.equal(quality.pre_1900_reports_removed,15);
+  assert.equal(quality.raw_rows-reports.length,15);
+  assert.ok(reports.every(row=>row.year>=1900&&row.population_year>=1900));
+  assert.equal(reports.reduce((year,row)=>Math.min(year,row.year),Infinity),1905);
+});
+test('explicit No media is preserved separately from missing media',()=>{const noMedia=filterReports(reports,{...DEFAULT_FILTERS,country:'',media:'no'});assert.equal(noMedia.length,133036);assert.ok(noMedia.every(r=>r.media_available===false));assert.equal(filterReports(reports,{...DEFAULT_FILTERS,country:'',media:'yes'}).length,6836);assert.equal(filterReports(reports,{...DEFAULT_FILTERS,country:'',shape:'unknown'}).length,25848);});
 test('search is case-insensitive and supports accents without changing the source',()=>{const f={...DEFAULT_FILTERS,country:'',query:'POUGHKEEPSIE'};assert.ok(filterReports(reports,f).some(r=>r.report_id==='nuforc-68697'));assert.equal(reports.find(r=>r.report_id==='nuforc-68697').city,'Poughkeepsie');});
 test('date formatting preserves recorded local time without timezone conversion',()=>{assert.equal(formatOccurrence({occurred_at_local:'2023-07-04T00:30:00'},true),'Jul 4, 2023 · 12:30 AM');});
-test('sort sends missing or flagged dates to the end in either direction',()=>{for(const order of ['oldest','newest']){const sorted=sortReports(reports,order);assert.equal(sorted.at(-1).occurred_at_local,null);}});
+test('sort sends missing or flagged dates to the end in either direction',()=>{for(const order of ['oldest','newest']){const flagged={report_id:'flagged-fixture',occurred_at_local:null};const sorted=sortReports([...reports.slice(0,2),flagged],order);assert.equal(sorted.at(-1),flagged);}});
 test('CSV export preserves quotes and prevents spreadsheet formula execution',()=>{const csv=reportsToCsv([{report_id:'x',summary:'=SUM(1,2) "quoted"',quality_flags:['a','b']}]);assert.ok(csv.startsWith('\uFEFF'));assert.ok(csv.includes("'=SUM(1,2)"));assert.ok(csv.includes('""quoted""'));assert.ok(csv.includes('a|b'));});
 
 test('corrected dates and time-only values are preserved without synthetic dates',()=>{
@@ -28,16 +33,15 @@ test('corrected dates and time-only values are preserved without synthetic dates
 });
 test('partition loader rejects incomplete data',async()=>{await assert.rejects(loadReportPartitions({schema_version:'partitioned-v1',total_reports:2,parts:['one']},async()=>[{}]),/reconcile/);});
 
-test('all 24 hourly buckets match the supplied TimeOnly SQL independently of date flags',()=>{
+test('all 24 hourly buckets match TimeOnly SQL after the historical cutoff',()=>{
   const expected=JSON.parse(readFileSync(new URL('../docs/feedback-reconciliation.json',import.meta.url),'utf8'));
   const result=aggregateReports(reports);
   assert.deepEqual(result.hours,expected.hours.map(({hour,count})=>({hour,count})));
-  assert.equal(result.validHours,139887);
+  assert.equal(result.validHours,139872);
   assert.equal(result.validTime,139872);
   for(const hour of expected.hours){
     const selected=filterReports(reports,{...DEFAULT_FILTERS,hour:String(hour.hour)});
     assert.equal(selected.length,hour.count);
-    assert.equal(selected.filter(r=>!r.eligible_for_time_analysis).length,hour.previous_date_flag_exclusions);
   }
 });
 

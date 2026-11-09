@@ -18,8 +18,9 @@ export function populationYearFromParam(value, years) {
 export function populationPeriod(reports, population, year) {
   if (year !== 'all') return {isAverage:false, startYear:year, endYear:year, yearCount:1, label:String(year)};
   const years = population.records.map(row => row.year);
-  const startYear = population.metadata?.min_year ?? Math.min(...years);
   const endYear = population.metadata?.max_year ?? Math.max(...years);
+  const firstReportYear = reports.reduce((first, report) => Math.min(first, recordedDate(report)?.year ?? Infinity), Infinity);
+  const startYear = Math.max(population.metadata?.min_year ?? Math.min(...years), Math.min(firstReportYear, endYear));
   return {isAverage:true, startYear, endYear, yearCount:endYear - startYear + 1, label:startYear + '–' + endYear};
 }
 
