@@ -19,7 +19,7 @@ We ignore the original Date and Time columns and the Date_Corrected column. We p
 
 We parse ReportedDate separately in month-day-year order and preserve it as reporting metadata. It is never used as the occurrence year or the population join year.
 
-The Fabric export contains 15 reports with occurrence dates before 1900. The app excludes those rows during preparation, before building report files, charts, population joins or CSV exports. The resulting **139,872** reports span **6 July 1905 through 6 March 2026**.
+The Fabric export contains 15 reports with occurrence dates before 1900. We exclude those rows from the analytical snapshot before building report files, charts, population joins or CSV exports. Explore features the entry dated 1400 as a separate source card with its NUFORC link. The resulting **139,872** reports span **6 July 1905 through 6 March 2026**.
 
 Our previous 3 November export had 139,903 reports and mixed MDY/DMY dates. That historical import used a pinned original-ID date reference. We retain support for that older input schema, but the corrected export uses the group-designated fields directly.
 
