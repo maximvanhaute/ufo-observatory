@@ -1,6 +1,11 @@
 # Verification record
 
-## Presentation alignment and historical cutoff — 9 November 2026
+## Historical reports included — 9 November 2026
+
+We restored all 15 pre-1900 reports as normal records in the published snapshot. The dashboard, hourly counts, timeline, report search, year filters and CSV use the same 139,887 report IDs as the Fabric export. The entry dated 1400 appears with an approximate date, consistent with NUFORC report 54856. The all-years population comparison matches 135,475 reports with a state-year population. The 2024 comparison still uses 3,370 matched reports.
+
+
+## Presentation alignment and historical cutoff — 9 November 2026 (superseded)
 
 We matched the About page’s cleaning stages to the final presentation. The group reports 159,538 original rows, 140,746 US rows, 139,903 after Excel, and 139,887 after Spark SQL. The final Fabric export includes 15 pre-1900 reports. The site excludes them during preparation and publishes 139,872 reports, with occurrence dates from 6 July 1905 to 6 March 2026.
 

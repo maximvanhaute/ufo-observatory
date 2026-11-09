@@ -86,7 +86,7 @@ export function formatOccurrence(record, withTime = false) {
   if (!record.occurred_at_local) return record.datetime_status === 'suspicious_year' ? 'Date flagged for review' : 'Date not provided';
   const [datePart, timePart] = record.occurred_at_local.split('T');
   const [year, month, day] = datePart.split('-').map(Number);
-  const dateText = `${MONTHS[month - 1]} ${day}, ${year}`;
+  const dateText = `${MONTHS[month - 1]} ${day}, ${year}` + (record.quality_flags?.includes('approximate_date') ? ' (approximate)' : '');
   if (!withTime) return dateText;
   const [hour, minute] = timePart.split(':').map(Number);
   return `${dateText} · ${hour % 12 || 12}:${String(minute).padStart(2, '0')} ${hour < 12 ? 'AM' : 'PM'}`;

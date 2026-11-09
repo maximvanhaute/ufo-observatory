@@ -23,7 +23,6 @@ def read(path):
 def reconcile(sightings_path, population_path):
     reports, populations = read(sightings_path), read(population_path)
     counts, hours = collections.Counter(), collections.Counter()
-    pre_1900_removed = 0
     null_ids = 0
     for row in reports:
         if row['ID'] is None:
@@ -31,9 +30,6 @@ def reconcile(sightings_path, population_path):
             continue  # COUNT(ID) counts non-null IDs.
         time = datetime.datetime.strptime(row.get('TimeOnly', row.get('Only_Time')), '%H:%M:%S').time()
         date = datetime.datetime.strptime(row['Date_Fixed'].replace('/', '-'), '%m-%d-%Y').date()
-        if date.year < 1900:
-            pre_1900_removed += 1
-            continue
         hours[time.hour] += 1
         counts[(row['State'].upper(), date.year)] += 1
 
@@ -78,9 +74,9 @@ def reconcile(sightings_path, population_path):
     return dict(
         source_files={path.name:hashlib.sha256(path.read_bytes()).hexdigest() for path in [sightings_path, population_path]},
         scope='Recomputed from supplied export files, not a live Fabric SQL execution.',
-        date_policy='Date_Fixed parsed as MDY. Occurrences before 1900 are excluded from all comparisons.',
+        date_policy='Date_Fixed parsed as MDY, including historical dates.',
         average_policy='Arithmetic mean of annual rates over active matched state-years, as in the supplied SQL. Zero-report years absent.',
-        input_rows=len(reports), null_ids=null_ids, pre_1900_reports_removed=pre_1900_removed,
+        input_rows=len(reports), null_ids=null_ids,
         hours=[dict(hour=h, count=hours[h]) for h in range(24)],
         original_sql_join=comparison(False), app_normalized_dc_join=comparison(True),
     )

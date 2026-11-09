@@ -188,7 +188,3 @@
   .population-year-label { flex: 1 1 100%; flex-direction: row; align-items: center; font-size: 11px; }
   .population-year-label select { flex: 1; }
 }
-
-.historical-report { margin-top: 18px; }
-.historical-report h3 { margin-top: 8px; }
-.historical-report .text-button { margin-top: 8px; }

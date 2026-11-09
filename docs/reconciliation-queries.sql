@@ -5,12 +5,11 @@
 -- These queries have been reproduced against the exported files; we have not
 -- executed them against the live Lakehouse in this update.
 
--- 1. Hourly chart. Apply the same occurrence-date cutoff as the app.
+-- 1. Hourly chart, including historical reports.
 SELECT DATEPART(hour, TRY_CAST(TimeOnly AS TIME)) AS Hour_of_Day,
        COUNT(ID) AS Observation_Count
 FROM ufo_sighting
 WHERE TRY_CAST(TimeOnly AS TIME) IS NOT NULL
-  AND TRY_CONVERT(DATE, REPLACE(Date_Fixed, '/', '-'), 110) >= '19000101'
 GROUP BY DATEPART(hour, TRY_CAST(TimeOnly AS TIME))
 ORDER BY Hour_of_Day;
 
@@ -26,7 +25,7 @@ WITH Parsed_Sightings AS (
 ), Yearly_Sightings AS (
     SELECT State_Abbreviation, Sighting_Year, COUNT(ID) AS Total_Sightings
     FROM Parsed_Sightings
-    WHERE Sighting_Year >= 1900
+    WHERE Sighting_Year IS NOT NULL
     GROUP BY State_Abbreviation, Sighting_Year
 ), Population_Normalized AS (
     SELECT COALESCE(NULLIF(UPPER(state_abbr), ''),

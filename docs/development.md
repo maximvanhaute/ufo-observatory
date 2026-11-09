@@ -61,7 +61,7 @@ Our verified 3 November release was created from GitHub commit `c48d81b2f89c4c7d
 
 We do not assume that every GitHub push automatically updates production. We confirm the project's Git connection and production-branch settings in Vercel before relying on that workflow. When releasing, we select the intended project and reviewed commit, inspect its deployment status, and check the production URL after it becomes ready.
 
-For the current snapshot, our initial live counts should be 139,872 reports, 139,656 mapped reports, and 139,872 eligible occurrence dates. We also check a filtered selection and its original report link. We record the deployed commit with the verification results.
+For the current snapshot, our initial live counts should be 139,887 reports, 139,671 mapped reports, and 139,887 eligible occurrence dates. We also check a filtered selection and its original report link. We record the deployed commit with the verification results.
 
 ## Common issues we check
 

@@ -19,7 +19,7 @@ We ignore the original Date and Time columns and the Date_Corrected column. We p
 
 We parse ReportedDate separately in month-day-year order and preserve it as reporting metadata. It is never used as the occurrence year or the population join year.
 
-The Fabric export contains 15 reports with occurrence dates before 1900. We exclude those rows from the analytical snapshot before building report files, charts, population joins or CSV exports. Explore features the entry dated 1400 as a separate source card with its NUFORC link. The resulting **139,872** reports span **6 July 1905 through 6 March 2026**.
+The Fabric export contains 15 reports with occurrence dates before 1900. We retain them as ordinary records in the report browser, year filters, charts and CSV. We label their dates as historical. The entry dated 1400 carries an approximate-date label from [its NUFORC record](https://nuforc.org/sighting/?id=54856). The full sample contains **139,887** reports spanning approximately 1400 through 6 March 2026.
 
 Our previous 3 November export had 139,903 reports and mixed MDY/DMY dates. That historical import used a pinned original-ID date reference. We retain support for that older input schema, but the corrected export uses the group-designated fields directly.
 
@@ -42,7 +42,7 @@ In a single year we include zero-report states when their population is availabl
 
 The population file ends in 2024. Alaska has no recent population values in the supplied file. For 2024, we match 49 states plus DC and compare **3,370 reports**. We exclude 15 Alaska reports and one US Virgin Islands report from that population comparison. Territory reports and Alaska reports remain available in the report explorer. The map shows unavailable state populations in gray with dashed borders.
 
-Of the 139,872 reports in the app, 135,472 have a population match and 4,400 lack a matching state-year population.
+Of the 139,887 reports in the app, 135,475 have a population match and 4,412 lack a matching state-year population.
 
 ## Our interactive comparison
 
@@ -54,9 +54,9 @@ We show mean reports and mean population over the same active years on the scatt
 
 We default to All years and keep its period separate from calendar filters on Explore, Reports, and Time & shapes. Switching pages does not silently impose 2024. Explicit single-year population links remain supported. The Read reports button applies the chosen population year to that drill-down, or clears year bounds for All years.
 
-The All years comparison starts with all **139,872 app reports** and includes **135,472** with population matches. Of **4,400** unmatched reports, **3,527** occur in 2025–2026 after the population series ends; the other **873** have missing state-year matches. Alaska has population values only in 1880 and 1890 and no reports in those years, so it has no active matched years. The dimension spans 1790–2024, with varying historical coverage. We do not extend populations to unsupported years.
+The All years comparison starts with all **139,887 app reports** and includes **135,475** with population matches. Of **4,412** unmatched reports, **3,527** occur in 2025–2026 after the population series ends; the other **885** have missing state-year matches. Alaska has population values only in 1880 and 1890 and no reports in those years, so it has no active matched years. The dimension spans 1790–2024, with varying historical coverage. We do not extend populations to unsupported years.
 
-The raw population file has 135 DC rows without state_abbr. The original unnormalized query therefore skips DC and matches **135,315 reports after the date cutoff**, 157 fewer than the app. Our [matching SQL](reconciliation-queries.sql) applies the same 1900 cutoff, fills DC from its exact full name, and explicitly parses the agreed MDY Date_Fixed format. We reproduced it from the exported source files; we have not executed it against the live Lakehouse. The [reconciliation record](feedback-reconciliation.json) contains all hourly buckets, active-year counts, and state averages, with both raw-file fingerprints. Vermont leads at **1.94 per 100,000 per active year** over 52 active years; California has **191.4 reports per active year** over 87 active years.
+The raw population file has 135 DC rows without state_abbr. The original unnormalized query therefore skips DC and matches **135,318 reports**, 157 fewer than the app. Our [matching SQL](reconciliation-queries.sql) fills DC from its exact full name, and explicitly parses the agreed MDY Date_Fixed format. We reproduced it from the exported source files; we have not executed it against the live Lakehouse. The [reconciliation record](feedback-reconciliation.json) contains all hourly buckets, active-year counts, and state averages, with both raw-file fingerprints. Vermont leads at **1.94 per 100,000 per active year** over 52 active years; California has **191.4 reports per active year** over 87 active years.
 
 State report drill-down shows all reports matching the selected state and chosen period. The selected-state card distinguishes the state’s report total from the number included in population calculations.
 
@@ -66,11 +66,11 @@ Shared URLs preserve the Population tab, occurrence year, measure, state, and re
 
 ## Our other preparation rules
 
-We retain 139,872 unique original IDs after the date cutoff and validate their source links. We normalise state and shape keys for display. We preserve source summaries and explicit Yes/No media values.
+We retain 139,887 unique original IDs and validate their source links. We normalise state and shape keys for display. We preserve source summaries and explicit Yes/No media values.
 
-We map 139,656 reports to the 50 states plus DC. We retain 216 territory reports outside those polygons. We retain the 68 missing summaries as missing. Media labels are 6,836 Yes and 133,036 No.
+We map 139,671 reports to the 50 states plus DC. We retain 216 territory reports outside those polygons. We retain the 68 missing summaries as missing. Media labels are 6,836 Yes and 133,051 No.
 
-Our presentation reports **159,538** records in the original NUFORC snapshot, **140,746** after filtering to the US, **139,903** after removing unusable locations in Excel, and **139,887** after the Spark SQL pass removed 16 duplicate reports. In Excel and Power Query, we consolidated shapes into 19 categories and expanded relative report links. In Fabric, we standardised geography and shape casing, extracted the clock time, and corrected ambiguous dates against the original table. The presentation documents these upstream stages. We independently checked the final export and the app’s 15-row historical exclusion.
+Our presentation reports **159,538** records in the original NUFORC snapshot, **140,746** after filtering to the US, **139,903** after removing unusable locations in Excel, and **139,887** after the Spark SQL pass removed 16 duplicate reports. In Excel and Power Query, we consolidated shapes into 19 categories and expanded relative report links. In Fabric, we standardised geography and shape casing, extracted the clock time, and corrected ambiguous dates against the original table. The presentation documents these upstream stages. We independently checked the final export and the 15 historical records.
 
 ## Reproducing our snapshot
 
