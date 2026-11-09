@@ -6,7 +6,7 @@ We built UFO Observatory for our Vlerick Modern Data Platforms group assignment.
 
 ## What we explore
 
-Our exploratory question is: **Where and when do people in the United States report UFO sightings, and how do the reported shapes vary?**
+Our main question is **where do UFO reports concentrate, and how does the ranking change when we account for state population?** We also explore when reports occur and how witnesses describe what they saw.
 
 We use the app to:
 
@@ -51,7 +51,15 @@ In **All years**, we first calculate each state’s rate in each matched occurre
 
 Reports retains all **139,887** records. Dashboard analysis uses **139,872** records dated 1900 onward. The all-years rate comparison uses **135,472** with matching populations. Of the **4,400** unmatched reports, **3,527** are from 2025–2026, after the population file ends; **873** have another missing state-year match. The supplied SQL without DC’s abbreviation repair uses 135,315 reports: its join drops DC’s 157 matched reports. Vermont leads the active-year rate at **1.94 per 100,000**, across **52 active years**. We reproduce all 24 hourly totals and every state average independently from the raw exports in [our reconciliation record](docs/feedback-reconciliation.json); [matching SQL](docs/reconciliation-queries.sql) uses the same dashboard date range and DC normalization.
 
-For 2024, we compare **3,370 reports across 49 states and DC**. California has 334 reports (0.85 per 100,000), and Montana has 35 (3.08 per 100,000). Alaska’s recent population is missing from the supplied file. Population stops at 2024, so we show an unavailable state for 2025–2026. We fill DC’s abbreviation from its exact full name. Our presentation traces the population series to U.S. Census Bureau data compiled by Rolf Hendriks on Kaggle.
+For 2024, we compare **3,370 reports across 49 states and DC**. California has 334 reports (0.85 per 100,000), and Montana has 35 (3.08 per 100,000). Alaska’s recent population is missing from the supplied file. Population stops at 2024, so we show an unavailable state for 2025–2026. We fill DC’s abbreviation from its exact full name. Our presentation traces the population series to a Kaggle compilation of U.S. Census Bureau data.
+
+## Our project walkthrough
+
+We kept the original NUFORC snapshot in Fabric for auditing. We cleaned the records with Excel and Power Query, then used Spark SQL in Fabric to standardise fields and correct dates before exporting JSON. [Cleaning stages and row counts](docs/data-preparation.md#our-cleaning-stages)
+
+1. In **Reports**, set the end year to **1899** to see the 15 historical entries. The oldest is a report about a photograph of rock art. NUFORC dates it to approximately 1400. [Historical reports](https://ufo-observatory-vlerick.vercel.app/?view=reports&to=1899)
+2. In **Explore**, the map and charts use the 139,872 reports dated 1900 onward. The busiest recorded hour is 9 PM with 19,974 reports, followed by 10 PM with 17,554. [Explore dashboard](https://ufo-observatory-vlerick.vercel.app/?view=explore)
+3. In **Patterns → Population**, choose **All years** and compare **Reports / year** with **Per 100k / year**. California leads on average annual report count. Vermont leads the average rate at 1.94 per 100,000 residents, followed by Montana at 1.74 and Idaho at 1.54. Each rate averages the years with reports and a population match. [Population comparison](https://ufo-observatory-vlerick.vercel.app/?view=patterns&pattern=population&population_year=all)
 
 ## Run our app locally
 
