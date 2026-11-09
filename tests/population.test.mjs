@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {gunzipSync} from 'node:zlib';
-import {DEFAULT_FILTERS,isDashboardReport,recordedDate} from '../dist/data-engine.js';
+import {DEFAULT_FILTERS,recordedDate} from '../dist/data-engine.js';
 import {comparePopulation, validatePopulation, populationToCsv, populationYearFromParam, populationReportFilters} from '../dist/population-engine.js';
 import {loadReportPartitions} from '../dist/data-loader.js';
 
@@ -10,8 +10,7 @@ const read = name => JSON.parse(readFileSync(new URL('../dist/data/' + name, imp
 const population = read('population.json');
 const manifest = read('manifest.json');
 const reports = await loadReportPartitions(read('reports.json'), name => JSON.parse(gunzipSync(readFileSync(new URL('../dist/data/' + name, import.meta.url)))));
-const dashboardReports = reports.filter(isDashboardReport);
-const compare = (filters = {}, year = 2024) => comparePopulation(dashboardReports, population, manifest.us_states, {...DEFAULT_FILTERS, ...filters}, year);
+const compare = (filters = {}, year = 2024) => comparePopulation(reports, population, manifest.us_states, {...DEFAULT_FILTERS, ...filters}, year);
 
 test('2024 rates use matching annual populations once per state', () => {
   validatePopulation(population);
@@ -115,19 +114,19 @@ test('all-years rate averages annual rates equally over active matched years, as
 
 test('all-years comparison retains every report in the denominator coverage reconciliation', () => {
   const result = compare({}, 'all');
-  assert.equal(result.startYear,1905);
+  assert.equal(result.startYear,1790);
   assert.equal(result.endYear,2024);
-  assert.equal(result.yearCount,120);
-  assert.equal(result.totalReports,139872);
-  assert.equal(result.matchedReports,135472);
-  assert.equal(result.excludedReports,4400);
+  assert.equal(result.yearCount,235);
+  assert.equal(result.totalReports,139887);
+  assert.equal(result.matchedReports,135475);
+  assert.equal(result.excludedReports,4412);
   assert.equal(result.outsidePeriodReports,3527);
   assert.equal(result.rows.length,50);
   assert.equal(result.partialStates.find(row=>row.code==='HI').coveredYears,75);
-  assert.equal(result.missingStates[0].code,'AK');
+  assert.equal(result.inactiveStates[0].code,'AK');
   const wa = result.rows.find(row=>row.code==='WA');
-  assert.equal(wa.count,7408);
-  assert.equal(wa.activeYears,78);
+  assert.equal(wa.count,7409);
+  assert.equal(wa.activeYears,79);
   assert.equal(wa.rate.toFixed(2),'1.48');
   assert.equal(result.byCount[0].code,'CA');
   assert.equal(result.byCount[0].annualCount.toFixed(1),'191.4');
@@ -139,7 +138,7 @@ test('all-years CSV describes annual means and the actual population coverage', 
   const csv = populationToCsv(compare({}, 'all'));
   assert.ok(csv.includes('active_years_count,active_start_year,active_end_year'));
   assert.ok(csv.includes('average_reports_per_active_year,average_population_active_years,average_annual_sightings_per_100k'));
-  assert.ok(csv.includes('"HI","Hawaii","1905","2024","75"'));
+  assert.ok(csv.includes('"HI","Hawaii","1790","2024","75"'));
   assert.ok(csv.includes('"partial_year_coverage"'));
   assert.equal(csv.split('\r\n').length,52);
 });
@@ -162,7 +161,7 @@ test('every state average matches an independent raw-export reproduction of the 
 test('zero active years are unavailable, rather than a fabricated zero average',()=>{
   const comparison=compare({query:'no-record-matches-this-exact-text-zzq'},'all');
   assert.equal(comparison.rows.length,0);
-  assert.equal(comparison.inactiveStates.length,50);
+  assert.equal(comparison.inactiveStates.length,51);
   assert.ok(comparison.allStates.every(row=>row.rate===null));
   assert.ok(populationToCsv(comparison).includes('"no_active_years"'));
 });
@@ -174,5 +173,5 @@ test('population defaults to all years and its period does not mutate other page
   assert.deepEqual(populationReportFilters(filters,'all'),{...filters,from:'',to:''});
   assert.deepEqual(populationReportFilters(filters,2024),{...filters,from:'2024',to:'2024'});
   assert.equal(filters.from,'2023');
-  assert.equal(compare(filters,'all').matchedReports,135472,'hidden general year filters do not narrow the population comparison');
+  assert.equal(compare(filters,'all').matchedReports,135475,'hidden general year filters do not narrow the population comparison');
 });

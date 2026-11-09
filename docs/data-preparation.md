@@ -22,7 +22,7 @@ We downloaded a JSON snapshot of the NUFORC reports and kept the original data i
 | Excel and Power Query | 139,903 | Removed 843 unusable locations, grouped shapes into 19 categories, and expanded relative report links |
 | Fabric and Spark SQL | 139,887 | Removed 16 duplicate reports, standardised geography and shape labels, extracted local clock times, and corrected ambiguous dates against the original table |
 
-We exported the curated Fabric data as JSON for the app. Reports keeps all 139,887 entries. Explore and Patterns use 139,872 entries dated 1900 onward. We independently checked the final export and the 15 historical records. The upstream counts come from our group’s presentation.
+We exported the curated Fabric data as JSON for the app. The dashboard and Reports both use all 139,887 entries. The year-by-year timeline covers 139,872 entries dated 1900 onward. We independently checked the final export and the 15 historical records. The upstream counts come from our group’s presentation.
 
 ## Our date contract
 
@@ -32,7 +32,7 @@ We ignore the original Date and Time columns and the Date_Corrected column. We p
 
 We parse ReportedDate separately in month-day-year order and preserve it as reporting metadata. It is never used as the occurrence year or the population join year.
 
-The Fabric export contains 15 reports with occurrence dates before 1900. We retain them in Reports, including its year filters and CSV. Explore and Patterns use reports from 1900 onward. We label their dates as historical. The entry dated 1400 carries an approximate-date label from [its NUFORC record](https://nuforc.org/sighting/?id=54856). The full report browser contains **139,887** records spanning approximately 1400 through 6 March 2026. Dashboard charts use **139,872** reports spanning 6 July 1905 through 6 March 2026. Report drill-downs opened from the dashboard keep its date scope.
+The Fabric export contains 15 reports with occurrence dates before 1900. We retain them in Reports, its CSV and the dashboard totals. The year-by-year timeline covers dates from 1900 onward. We label their dates as historical. The entry dated 1400 carries an approximate-date label from [its NUFORC record](https://nuforc.org/sighting/?id=54856). The full report browser contains **139,887** records spanning approximately 1400 through 6 March 2026. The timeline plots **139,872** reports spanning 6 July 1905 through 6 March 2026.
 
 Our previous 3 November export had 139,903 reports and mixed MDY/DMY dates. That historical import used a pinned original-ID date reference. We retain support for that older input schema, but the corrected export uses the group-designated fields directly.
 
@@ -55,7 +55,7 @@ In a single year we include zero-report states when their population is availabl
 
 The population file ends in 2024. Alaska has no recent population values in the supplied file. For 2024, we match 49 states plus DC and compare **3,370 reports**. We exclude 15 Alaska reports and one US Virgin Islands report from that population comparison. Territory reports and Alaska reports remain available in the report explorer. The map shows unavailable state populations in gray with dashed borders.
 
-Of the 139,872 dashboard reports, 135,472 have a population match and 4,400 lack a matching state-year population.
+Of the 139,887 dashboard reports, 135,475 have a population match and 4,412 lack a matching state-year population.
 
 ## Our interactive comparison
 
@@ -65,11 +65,11 @@ For All years, we reproduce the group’s query: count reports by state and occu
 
 We show mean reports and mean population over the same active years on the scatter plot. We retain total matched reports and Active_Years_Count in the selected-state details and CSV. We round only for display. The proportional reference line still uses pooled reports divided by pooled populations over the included active state-years; it is labelled as a pooled reference rather than the mean of the state rates.
 
-We default to All years and keep its period separate from calendar filters on Explore, Reports, and Time & shapes. The Read reports button applies the chosen year to that drill-down. For All years, the drill-down uses the dashboard’s date range.
+We default to All years and keep its period separate from calendar filters on Explore, Reports, and Time & shapes. The Read reports button applies the chosen year to that drill-down. All years clears the year bounds.
 
-The All years comparison starts with all **139,872 dashboard reports** and includes **135,472** with population matches. Of **4,400** unmatched reports, **3,527** occur in 2025–2026 after the population series ends; the other **873** have missing state-year matches. Alaska has population values only in 1880 and 1890 and no reports in those years, so it has no active matched years. The dimension spans 1790–2024, with varying historical coverage. We do not extend populations to unsupported years.
+The All years comparison starts with all **139,887 dashboard reports** and includes **135,475** with population matches. Of **4,412** unmatched reports, **3,527** occur in 2025–2026 after the population series ends; the other **885** have missing state-year matches. Alaska has population values only in 1880 and 1890 and no reports in those years, so it has no active matched years. The dimension spans 1790–2024, with varying historical coverage. We do not extend populations to unsupported years.
 
-The raw population file has 135 DC rows with a blank state_abbr. The original join skips DC and matches **135,315 reports**, 157 fewer than the app. Our matching SQL fills DC from its exact full name, parses Date_Fixed as month-day-year, and applies the dashboard’s date range. [Matching SQL](reconciliation-queries.sql)
+The raw population file has 135 DC rows with a blank state_abbr. The original join skips DC and matches **135,318 reports**, 157 fewer than the app. Our matching SQL fills DC from its exact full name and parses Date_Fixed as month-day-year. [Matching SQL](reconciliation-queries.sql)
 
 We reproduced the calculation using the exported files. The reconciliation record contains the hourly counts, active-year counts, state averages, and both input fingerprints. Vermont averages **1.94 reports per 100,000 residents per active year** over 52 years. California averages **191.4 reports per active year** over 87 years. [Reconciliation record](feedback-reconciliation.json)
 
@@ -83,7 +83,7 @@ Shared URLs preserve the Population tab, occurrence year, measure, state, and re
 
 We retain 139,887 unique original IDs and validate their source links. We normalise state and shape keys for display. We preserve source summaries and explicit Yes/No media values.
 
-We map 139,656 dashboard reports to the 50 states plus DC. We retain 216 territory reports outside those polygons. We retain the 68 missing summaries as missing. Media labels are 6,836 Yes and 133,051 No.
+We map 139,671 dashboard reports to the 50 states plus DC. We retain 216 territory reports outside those polygons. We retain the 68 missing summaries as missing. Media labels are 6,836 Yes and 133,051 No.
 
 ## Reproducing our snapshot
 

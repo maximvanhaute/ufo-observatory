@@ -1,6 +1,11 @@
 # Verification record
 
-## Historical entries in Reports only — 9 November 2026
+## Full dashboard totals and a timeline from 1900 — 9 November 2026
+
+The dashboard totals and Reports both use the full 139,887-record export. The map includes 139,671 reports and the all-years population comparison matches 135,475. The year-by-year timeline uses 139,872 reports with dates from 1900 onward. Its first plotted year is 1905. Filtering to pre-1900 dates still returns the historical reports, and the timeline explains its date range.
+
+
+## Historical entries in Reports only — 9 November 2026 (superseded)
 
 We retain 139,887 records in Reports and its CSV, including all 15 pre-1900 entries. Explore and Patterns use 139,872 records dated 1900 onward, so the timeline begins in 1905. The state map counts 139,656 records. All-years population matches 135,472 reports. The historical record dated approximately 1400 remains available through the normal report browser and its source link.
 

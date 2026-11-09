@@ -3,17 +3,15 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {gunzipSync} from 'node:zlib';
 import {loadReportPartitions} from '../dist/data-loader.js';
-import {DEFAULT_FILTERS,isDashboardReport,filterReports,aggregateReports,sortReports,formatOccurrence,reportsToCsv,recordedHour} from '../dist/data-engine.js';
+import {DEFAULT_FILTERS,filterReports,aggregateReports,sortReports,formatOccurrence,reportsToCsv,recordedHour} from '../dist/data-engine.js';
 const read=name=>JSON.parse(readFileSync(new URL(`../dist/data/${name}`,import.meta.url),'utf8'));
 const reports=await loadReportPartitions(read('reports.json'),name=>JSON.parse(gunzipSync(readFileSync(new URL(`../dist/data/${name}`,import.meta.url))))),quality=read('summaries.json').quality;
 
 test('the app counts reconcile with the Fabric quality export',()=>{const a=aggregateReports(reports);assert.equal(a.total,quality.clean_reports);assert.equal(a.validTime,quality.valid_time_reports);assert.equal(a.mapped,quality.reports_mapped_to_us_states);assert.equal(a.usReports,quality.us_reports);assert.equal(a.validHours,quality.valid_hour_reports);assert.equal(a.hours.reduce((n,r)=>n+r.count,0),a.validHours);assert.equal(a.heatmap.length,288);assert.equal(a.heatmap.reduce((n,r)=>n+r.count,0),a.validTime);assert.equal(a.shapes.reduce((n,r)=>n+r.count,0),a.total);});
-const dashboardReports=reports.filter(isDashboardReport);
-
-test('the dashboard excludes historical reports and retains territory records',()=>{const a=aggregateReports(filterReports(dashboardReports,DEFAULT_FILTERS));assert.equal(a.total,139872);assert.equal(a.mapped,139656);assert.equal(a.unmapped,216);});
+test('the default view shows all US reports and retains unmapped records',()=>{const a=aggregateReports(filterReports(reports,DEFAULT_FILTERS));assert.equal(a.total,139887);assert.equal(a.mapped,139671);assert.equal(a.unmapped,216);});
 test('year, shape and state cross-filters agree with independent source selection',()=>{const f={...DEFAULT_FILTERS,state:'CA',shape:'triangle',from:'2023',to:'2023'};const actual=filterReports(reports,f);const expected=reports.filter(r=>r.country_key==='US'&&r.state_code==='CA'&&r.shape_key==='triangle'&&r.eligible_for_time_analysis&&r.year===2023);assert.deepEqual(actual,expected);});
 test('midnight and January do not disappear as falsy filters',()=>{const result=filterReports(reports,{...DEFAULT_FILTERS,country:'',hour:'0',month:'1'});assert.ok(result.length>0);assert.ok(result.every(r=>r.hour===0&&r.month===1));});
-test('historical reports appear in Reports and its CSV while charts start in 1905',()=>{
+test('historical reports count in the dashboard and CSV while the timeline starts in 1905',()=>{
   const historical=reports.filter(row=>row.year<1900);
   assert.equal(quality.pre_1900_reports_retained,15);
   assert.equal(historical.length,15);
@@ -21,8 +19,11 @@ test('historical reports appear in Reports and its CSV while charts start in 190
   const first=filterReports(reports,{...DEFAULT_FILTERS,from:'1400',to:'1400'});
   assert.deepEqual(first.map(row=>row.report_id),['nuforc-54856']);
   assert.equal(formatOccurrence(first[0]),'Jun 30, 1400 (approximate)');
-  assert.equal(aggregateReports(dashboardReports).timeline[0].year,1905);
-  assert.ok(historical.every(row=>!isDashboardReport(row)));
+  const dashboard=aggregateReports(reports);
+  assert.equal(dashboard.total,139887);
+  assert.equal(dashboard.timeline[0].year,1905);
+  assert.equal(dashboard.timeline.reduce((total,row)=>total+row.count,0),139872);
+  assert.deepEqual(aggregateReports(first).timeline,[]);
   assert.ok(reportsToCsv(first).includes('1400-06-30T00:00:00'));
 });
 test('explicit No media is preserved separately from missing media',()=>{const noMedia=filterReports(reports,{...DEFAULT_FILTERS,country:'',media:'no'});assert.equal(noMedia.length,133051);assert.ok(noMedia.every(r=>r.media_available===false));assert.equal(filterReports(reports,{...DEFAULT_FILTERS,country:'',media:'yes'}).length,6836);assert.equal(filterReports(reports,{...DEFAULT_FILTERS,country:'',shape:'unknown'}).length,25853);});
@@ -41,14 +42,14 @@ test('corrected dates and time-only values are preserved without synthetic dates
 });
 test('partition loader rejects incomplete data',async()=>{await assert.rejects(loadReportPartitions({schema_version:'partitioned-v1',total_reports:2,parts:['one']},async()=>[{}]),/reconcile/);});
 
-test('all 24 dashboard hourly buckets match TimeOnly SQL for 1900 onward',()=>{
+test('all 24 hourly buckets match TimeOnly SQL including historical reports',()=>{
   const expected=JSON.parse(readFileSync(new URL('../docs/feedback-reconciliation.json',import.meta.url),'utf8'));
-  const result=aggregateReports(dashboardReports);
+  const result=aggregateReports(reports);
   assert.deepEqual(result.hours,expected.hours.map(({hour,count})=>({hour,count})));
-  assert.equal(result.validHours,139872);
-  assert.equal(result.validTime,139872);
+  assert.equal(result.validHours,139887);
+  assert.equal(result.validTime,139887);
   for(const hour of expected.hours){
-    const selected=filterReports(dashboardReports,{...DEFAULT_FILTERS,hour:String(hour.hour)});
+    const selected=filterReports(reports,{...DEFAULT_FILTERS,hour:String(hour.hour)});
     assert.equal(selected.length,hour.count);
   }
 });

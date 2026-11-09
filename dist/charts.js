@@ -95,7 +95,7 @@ export function renderHeatmap(element, stats, filters, onCell) {
 }
 
 export function renderTimeline(element, stats, onYear) {
-  clear(element);if(!stats.timeline.length){empty(element,'No usable occurrence dates in this selection.');return;}
+  clear(element);if(!stats.timeline.length){empty(element,'The timeline covers reports dated 1900 onward.');return;}
   const d3=window.d3,{width:W}=chartSize(element,225),H=225,m={left:40,right:12,top:10,bottom:28};
   const svg=node('svg',{viewBox:`0 0 ${W} ${H}`,class:'chart-svg','aria-label':'Reports in the sample by occurrence year'});
   const first=stats.timeline[0].year,last=stats.timeline.at(-1).year;

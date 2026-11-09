@@ -27,15 +27,15 @@ We use `Final File Swear on god for now!.json`, the group’s corrected Fabric e
 | --- | ---: |
 | Final Fabric export rows | 139,887 |
 | Unique report IDs in the app | 139,887 |
-| Dashboard reports mapped to the 50 US states and Washington, DC | 139,656 |
+| Dashboard reports mapped to the 50 US states and Washington, DC | 139,671 |
 | Territory reports retained outside that map | 216 |
-| Reports in dashboard charts | 139,872 |
-| Reports with valid clock times in the hourly chart | 139,872 |
+| Reports in the year-by-year timeline | 139,872 |
+| Reports with valid clock times in the hourly chart | 139,887 |
 | Pre-1900 entries available in Reports | 15 |
 | Reports without a supplied summary | 68 |
 | Source indicates media: Yes / No | 6,836 / 133,051 |
 
-Reports spans **approximately 1400 to 6 March 2026**. Dashboard charts use reports dated 1900 onward, with the earliest included record dated **6 July 1905**. We preserve the original ID and source link of every included report. We keep missing summaries missing, retain the source's `Unknown/Other` shape category, and distinguish an explicit `No` media label from missing information.
+Reports spans **approximately 1400 to 6 March 2026**. Dashboard totals cover the full collection. The year-by-year timeline uses reports dated 1900 onward, with the earliest plotted record dated **6 July 1905**. We preserve the original ID and source link of every included report. We keep missing summaries missing, retain the source's `Unknown/Other` shape category, and distinguish an explicit `No` media label from missing information.
 
 We use `Date_Fixed` in month-day-year order and the supplied `TimeOnly` values. We ignore `Date`, `Time`, and `Date_Corrected`. Our adapter also supports the spelling `Only_Time`. Both supplied files contain one JSON object per line. We retain population as a separate state/year dimension and also add the matching `state_population` to each report. We explain our rules and source fingerprints in [our data preparation guide](docs/data-preparation.md).
 
@@ -49,7 +49,7 @@ We join population on **state code + occurrence year** and use each state-year d
 
 In **All years**, we first calculate each state’s rate in each matched occurrence year, then take the arithmetic mean of those annual rates. This matches our group’s `AVG(Yearly_Rate_Per_100k)` query. Each active year has equal weight; a year is active when it has at least one filtered report and a matching population. Zero-report years do not enter that query or the app’s average. We show active-year counts in tooltips and CSV. The scatter and count ranking show mean reports and mean population over those same active years. This is an average across observed active years, not a rate over every calendar year.
 
-Reports retains all **139,887** records. Dashboard analysis uses **139,872** records dated 1900 onward. The all-years rate comparison uses **135,472** with matching populations. Of the **4,400** unmatched reports, **3,527** are from 2025–2026, after the population file ends; **873** have another missing state-year match. The supplied SQL without DC’s abbreviation repair uses 135,315 reports: its join drops DC’s 157 matched reports. Vermont leads the active-year rate at **1.94 per 100,000**, across **52 active years**. We reproduce all 24 hourly totals and every state average independently from the raw exports in [our reconciliation record](docs/feedback-reconciliation.json); [matching SQL](docs/reconciliation-queries.sql) uses the same dashboard date range and DC normalization.
+The dashboard and Reports both use all **139,887** records. The all-years rate comparison uses **135,475** with matching populations. Of the **4,412** unmatched reports, **3,527** are from 2025–2026, after the population file ends; **885** have another missing state-year match. The supplied SQL without DC’s abbreviation repair uses 135,318 reports: its join drops DC’s 157 matched reports. Vermont leads the active-year rate at **1.94 per 100,000**, across **52 active years**. We reproduce all 24 hourly totals and every state average independently from the raw exports in [our reconciliation record](docs/feedback-reconciliation.json); [matching SQL](docs/reconciliation-queries.sql) uses the same population join and DC normalization.
 
 For 2024, we compare **3,370 reports across 49 states and DC**. California has 334 reports (0.85 per 100,000), and Montana has 35 (3.08 per 100,000). Alaska’s recent population is missing from the supplied file. Population stops at 2024, so we show an unavailable state for 2025–2026. We fill DC’s abbreviation from its exact full name. Our presentation traces the population series to a Kaggle compilation of U.S. Census Bureau data.
 
@@ -58,7 +58,7 @@ For 2024, we compare **3,370 reports across 49 states and DC**. California has 3
 We kept the original NUFORC snapshot in Fabric for auditing. We cleaned the records with Excel and Power Query, then used Spark SQL in Fabric to standardise fields and correct dates before exporting JSON. [Cleaning stages and row counts](docs/data-preparation.md#our-cleaning-stages)
 
 1. In **Reports**, set the end year to **1899** to see the 15 historical entries. The oldest is a report about a photograph of rock art. NUFORC dates it to approximately 1400. [Historical reports](https://ufo-observatory-vlerick.vercel.app/?view=reports&to=1899)
-2. In **Explore**, the map and charts use the 139,872 reports dated 1900 onward. The busiest recorded hour is 9 PM with 19,974 reports, followed by 10 PM with 17,554. [Explore dashboard](https://ufo-observatory-vlerick.vercel.app/?view=explore)
+2. In **Explore**, the map and hourly chart use the full collection. The busiest recorded hour is 9 PM with 19,975 reports, followed by 10 PM with 17,554. The timeline in Patterns starts with the first available report after 1900, in 1905. [Explore dashboard](https://ufo-observatory-vlerick.vercel.app/?view=explore)
 3. In **Patterns → Population**, choose **All years** and compare **Reports / year** with **Per 100k / year**. California leads on average annual report count. Vermont leads the average rate at 1.94 per 100,000 residents, followed by Montana at 1.74 and Idaho at 1.54. Each rate averages the years with reports and a population match. [Population comparison](https://ufo-observatory-vlerick.vercel.app/?view=patterns&pattern=population&population_year=all)
 
 ## Run our app locally
