@@ -4,14 +4,15 @@
     "State_Population.json": "8c924530e1c17a94c4e008324969fe860284d82d0f9462083e76afec1d970604"
   },
   "scope": "Recomputed from supplied export files, not a live Fabric SQL execution.",
-  "date_policy": "Date_Fixed parsed as MDY, including historical dates.",
+  "date_policy": "Date_Fixed parsed as MDY. Dashboard comparisons use occurrence years from 1900 onward.",
   "average_policy": "Arithmetic mean of annual rates over active matched state-years, as in the supplied SQL. Zero-report years absent.",
   "input_rows": 139887,
   "null_ids": 0,
+  "historical_reports_only": 15,
   "hours": [
     {
       "hour": 0,
-      "count": 7880
+      "count": 7875
     },
     {
       "hour": 1,
@@ -35,15 +36,15 @@
     },
     {
       "hour": 6,
-      "count": 2746
+      "count": 2745
     },
     {
       "hour": 7,
-      "count": 1809
+      "count": 1808
     },
     {
       "hour": 8,
-      "count": 1581
+      "count": 1579
     },
     {
       "hour": 9,
@@ -67,7 +68,7 @@
     },
     {
       "hour": 14,
-      "count": 2316
+      "count": 2315
     },
     {
       "hour": 15,
@@ -91,11 +92,11 @@
     },
     {
       "hour": 20,
-      "count": 15290
+      "count": 15287
     },
     {
       "hour": 21,
-      "count": 19975
+      "count": 19974
     },
     {
       "hour": 22,
@@ -103,13 +104,13 @@
     },
     {
       "hour": 23,
-      "count": 12268
+      "count": 12267
     }
   ],
   "original_sql_join": {
-    "matched_reports": 135318,
+    "matched_reports": 135315,
     "excluded_reports": {
-      "missing_state_year": 1042,
+      "missing_state_year": 1030,
       "after_population_end": 3527
     },
     "states": [
@@ -160,12 +161,12 @@
       {
         "state_code": "WA",
         "state_name": "Washington",
-        "active_years": 79,
-        "reports": 7409,
-        "average_annual_sightings_per_100k": 1.4758037992837951,
-        "average_reports_per_active_year": 93.78481012658227,
-        "average_population_active_years": 4682206.113924051,
-        "active_start_year": 1880,
+        "active_years": 78,
+        "reports": 7408,
+        "average_annual_sightings_per_100k": 1.4776567416367168,
+        "average_reports_per_active_year": 94.97435897435898,
+        "average_population_active_years": 4741271.371794872,
+        "active_start_year": 1946,
         "active_end_year": 2024
       },
       {
@@ -444,6 +445,17 @@
         "active_end_year": 2024
       },
       {
+        "state_code": "NC",
+        "state_name": "North Carolina",
+        "active_years": 70,
+        "reports": 3795,
+        "average_annual_sightings_per_100k": 0.5846161167200951,
+        "average_reports_per_active_year": 54.214285714285715,
+        "average_population_active_years": 7094107.242857143,
+        "active_start_year": 1930,
+        "active_end_year": 2024
+      },
+      {
         "state_code": "KY",
         "state_name": "Kentucky",
         "active_years": 71,
@@ -463,17 +475,6 @@
         "average_reports_per_active_year": 37.29333333333334,
         "average_population_active_years": 5581489.773333333,
         "active_start_year": 1920,
-        "active_end_year": 2024
-      },
-      {
-        "state_code": "NC",
-        "state_name": "North Carolina",
-        "active_years": 71,
-        "reports": 3796,
-        "average_annual_sightings_per_100k": 0.5778010063993751,
-        "average_reports_per_active_year": 53.46478873239437,
-        "average_population_active_years": 7008170.830985916,
-        "active_start_year": 1860,
         "active_end_year": 2024
       },
       {
@@ -622,12 +623,12 @@
       {
         "state_code": "NY",
         "state_name": "New York",
-        "active_years": 81,
-        "reports": 6135,
-        "average_annual_sightings_per_100k": 0.39737517763545716,
-        "average_reports_per_active_year": 75.74074074074075,
-        "average_population_active_years": 17620633.97530864,
-        "active_start_year": 1790,
+        "active_years": 80,
+        "reports": 6134,
+        "average_annual_sightings_per_100k": 0.3986671938877127,
+        "average_reports_per_active_year": 76.675,
+        "average_population_active_years": 17836640.4,
+        "active_start_year": 1930,
         "active_end_year": 2024
       },
       {
@@ -655,9 +656,9 @@
     ]
   },
   "app_normalized_dc_join": {
-    "matched_reports": 135475,
+    "matched_reports": 135472,
     "excluded_reports": {
-      "missing_state_year": 885,
+      "missing_state_year": 873,
       "after_population_end": 3527
     },
     "states": [
@@ -708,12 +709,12 @@
       {
         "state_code": "WA",
         "state_name": "Washington",
-        "active_years": 79,
-        "reports": 7409,
-        "average_annual_sightings_per_100k": 1.4758037992837951,
-        "average_reports_per_active_year": 93.78481012658227,
-        "average_population_active_years": 4682206.113924051,
-        "active_start_year": 1880,
+        "active_years": 78,
+        "reports": 7408,
+        "average_annual_sightings_per_100k": 1.4776567416367168,
+        "average_reports_per_active_year": 94.97435897435898,
+        "average_population_active_years": 4741271.371794872,
+        "active_start_year": 1946,
         "active_end_year": 2024
       },
       {
@@ -1003,6 +1004,17 @@
         "active_end_year": 2024
       },
       {
+        "state_code": "NC",
+        "state_name": "North Carolina",
+        "active_years": 70,
+        "reports": 3795,
+        "average_annual_sightings_per_100k": 0.5846161167200951,
+        "average_reports_per_active_year": 54.214285714285715,
+        "average_population_active_years": 7094107.242857143,
+        "active_start_year": 1930,
+        "active_end_year": 2024
+      },
+      {
         "state_code": "KY",
         "state_name": "Kentucky",
         "active_years": 71,
@@ -1022,17 +1034,6 @@
         "average_reports_per_active_year": 37.29333333333334,
         "average_population_active_years": 5581489.773333333,
         "active_start_year": 1920,
-        "active_end_year": 2024
-      },
-      {
-        "state_code": "NC",
-        "state_name": "North Carolina",
-        "active_years": 71,
-        "reports": 3796,
-        "average_annual_sightings_per_100k": 0.5778010063993751,
-        "average_reports_per_active_year": 53.46478873239437,
-        "average_population_active_years": 7008170.830985916,
-        "active_start_year": 1860,
         "active_end_year": 2024
       },
       {
@@ -1181,12 +1182,12 @@
       {
         "state_code": "NY",
         "state_name": "New York",
-        "active_years": 81,
-        "reports": 6135,
-        "average_annual_sightings_per_100k": 0.39737517763545716,
-        "average_reports_per_active_year": 75.74074074074075,
-        "average_population_active_years": 17620633.97530864,
-        "active_start_year": 1790,
+        "active_years": 80,
+        "reports": 6134,
+        "average_annual_sightings_per_100k": 0.3986671938877127,
+        "average_reports_per_active_year": 76.675,
+        "average_population_active_years": 17836640.4,
+        "active_start_year": 1930,
         "active_end_year": 2024
       },
       {

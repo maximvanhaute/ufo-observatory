@@ -1,4 +1,5 @@
 export const DEFAULT_FILTERS = Object.freeze({ country: 'US', state: '', shape: '', from: '', to: '', month: '', hour: '', media: '', query: '' });
+export const DASHBOARD_MIN_YEAR = 1900;
 export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 export const SHAPE_COLORS = { triangle: '#b9f56c', disk: '#55d7c9', orb: '#77b9fa', light: '#b5a4f4', circle: '#f0ce83', rectangle: '#f294b5', not_provided: '#8a9cac', unknown: '#b7c3d1' };
 const normalize = value => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
@@ -26,6 +27,11 @@ export function recordedDate(report) {
   const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
   const days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
   return year > 0 && month >= 1 && month <= 12 && day >= 1 && day <= days[month - 1] ? {year, month, day} : null;
+}
+
+export function isDashboardReport(report) {
+  const year = recordedDate(report)?.year;
+  return year === undefined || year >= DASHBOARD_MIN_YEAR;
 }
 
 export function filterReports(reports, filters, {includeFlaggedDates = false} = {}) {

@@ -1,6 +1,11 @@
 # Verification record
 
-## Historical reports included — 9 November 2026
+## Historical entries in Reports only — 9 November 2026
+
+We retain 139,887 records in Reports and its CSV, including all 15 pre-1900 entries. Explore and Patterns use 139,872 records dated 1900 onward, so the timeline begins in 1905. The state map counts 139,656 records. All-years population matches 135,472 reports. The historical record dated approximately 1400 remains available through the normal report browser and its source link.
+
+
+## Historical reports included — 9 November 2026 (superseded)
 
 We restored all 15 pre-1900 reports as normal records in the published snapshot. The dashboard, hourly counts, timeline, report search, year filters and CSV use the same 139,887 report IDs as the Fabric export. The entry dated 1400 appears with an approximate date, consistent with NUFORC report 54856. The all-years population comparison matches 135,475 reports with a state-year population. The 2024 comparison still uses 3,370 matched reports.
 
